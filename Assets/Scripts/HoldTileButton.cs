@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class HoldTileButton : MonoBehaviour
@@ -9,10 +10,12 @@ public class HoldTileButton : MonoBehaviour
 
     [SerializeField] float speed;
 
+    // 버튼을 눌렀을 시 목표 지점
     [SerializeField] Vector3 pushPos;
     Vector3 desPos = Vector3.zero;
     private void Start()
     {
+        holdTile.position = Vector3.zero;
         anim = GetComponent<Animator>();
         StartCoroutine(Move());
     }
@@ -22,7 +25,7 @@ public class HoldTileButton : MonoBehaviour
         while (true)
         {
             yield return null;
-            if ((desPos - holdTile.position).magnitude > 0.03)
+            if ((desPos - holdTile.position).magnitude > 0.05f)
                 holdTile.position += (desPos - holdTile.position).normalized * speed * Time.deltaTime;
             else
                 yield break;
@@ -33,8 +36,8 @@ public class HoldTileButton : MonoBehaviour
     {
         if (collision.GetComponent<Rigidbody2D>() != null)
         {
-            StartCoroutine(Move());
             desPos = pushPos;
+            StartCoroutine(Move());
             anim.Play("Push");
         }
     }
@@ -43,8 +46,8 @@ public class HoldTileButton : MonoBehaviour
     {
         if (collision.GetComponent<Rigidbody2D>() != null)
         {
-            StartCoroutine(Move());
             desPos = Vector3.zero;
+            StartCoroutine(Move());
             anim.Play("Pull");
         }
     }
