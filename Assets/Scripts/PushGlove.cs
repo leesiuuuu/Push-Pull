@@ -23,7 +23,7 @@ public class PushGlove : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        Player1 player1 = gameObject.GetComponentInParent<Player1>();
+        NewPlayer1 player1 = gameObject.GetComponentInParent<NewPlayer1>();
         if (player1)
         {
             if (!_canPushPlayer1)
@@ -52,7 +52,7 @@ public class PushGlove : MonoBehaviour
             }
         }
 
-        Player2 player2 = gameObject.GetComponentInParent<Player2>();
+        NewPlayer2 player2 = gameObject.GetComponentInParent<NewPlayer2>();
         if (player2)
         {
             if (!_canPushPlayer2)

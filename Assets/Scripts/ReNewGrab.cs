@@ -6,7 +6,8 @@ using UnityEngine;
 
 public class ReNewGrab : MonoBehaviour
 {
-    Player1 player;
+    //->Newplayer 코드에 맞춰 변경
+    NewPlayer1 player;
 
     public Transform Target;
 
@@ -21,7 +22,7 @@ public class ReNewGrab : MonoBehaviour
 
     private void Awake()
     {
-        player = GetComponentInParent<Player1>();
+        player = GetComponentInParent<NewPlayer1>();
     }
 
     private void Start()
