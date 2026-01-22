@@ -17,6 +17,14 @@ public class NewPlayer2Grab : MonoBehaviour
     public bool grabing;
     public bool targetingable;
 
+
+
+
+    [SerializeField] private NewPlayer1Grab player1Grab;
+
+    public bool GrabPlayer = false;
+
+
     private void Awake()
     {
         player = GetComponentInParent<NewPlayer2>();
@@ -71,7 +79,25 @@ public class NewPlayer2Grab : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("interactive"))
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            if (!player1Grab.GrabPlayer)
+            {
+                GrabPlayer = true;
+                if (grabing)
+                {
+                    if (targetingable)
+                    {
+                        Target = collision.gameObject.GetComponent<Transform>();
+                        targetingable = false;
+                        StopAllCoroutines();
+                        StartCoroutine(BackGrab());
+                    }
+                    holdGrab = true;
+                }
+            }
+        }
+        else if (collision.gameObject.CompareTag("interactive"))
         {
             if (grabing)
             {
@@ -133,6 +159,7 @@ public class NewPlayer2Grab : MonoBehaviour
 
             if (Vector3.Distance(transform.localPosition, targetPos) < threshold)
             {
+                GrabPlayer = false;
                 break;
             }
             yield return null;
