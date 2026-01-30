@@ -216,6 +216,7 @@ GameObject:
   - component: {fileID: 51412786}
   - component: {fileID: 51412785}
   - component: {fileID: 51412787}
+  - component: {fileID: 51412788}
   m_Layer: 0
   m_Name: BreakTile (1)
   m_TagString: Untagged
@@ -415,7 +416,7 @@ Tilemap:
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
-  m_Color: {r: 0.5227282, g: 0.34901962, b: 0.6509804, a: 1}
+  m_Color: {r: 0.4, g: 0.4, b: 0.4, a: 1}
   m_Origin: {x: 0, y: -1, z: 0}
   m_Size: {x: 20, y: 9, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
@@ -473,6 +474,18 @@ TilemapCollider2D:
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0
   m_UseDelaunayMesh: 0
+--- !u!114 &51412788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 51412783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 270896a930b52f54685d758af3558dcb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &62568143
 GameObject:
   m_ObjectHideFlags: 0
@@ -2327,6 +2340,7 @@ GameObject:
   - component: {fileID: 744999351}
   - component: {fileID: 744999350}
   - component: {fileID: 744999352}
+  - component: {fileID: 744999353}
   m_Layer: 0
   m_Name: BreakTile
   m_TagString: Untagged
@@ -2538,7 +2552,7 @@ Tilemap:
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
-  m_Color: {r: 0.5227282, g: 0.34901962, b: 0.6509804, a: 1}
+  m_Color: {r: 0.4, g: 0.4, b: 0.4, a: 1}
   m_Origin: {x: 0, y: -1, z: 0}
   m_Size: {x: 13, y: 7, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
@@ -2596,6 +2610,18 @@ TilemapCollider2D:
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0
   m_UseDelaunayMesh: 0
+--- !u!114 &744999353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 744999348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 270896a930b52f54685d758af3558dcb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &801927134
 PrefabInstance:
   m_ObjectHideFlags: 0
