@@ -221,9 +221,9 @@ GameObject:
   - component: {fileID: 51412785}
   - component: {fileID: 51412787}
   - component: {fileID: 51412788}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: BreakTile (1)
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -992,9 +992,9 @@ GameObject:
   - component: {fileID: 244698847}
   - component: {fileID: 244698849}
   - component: {fileID: 244698850}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: BreakTile (3)
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2792,9 +2792,9 @@ GameObject:
   - component: {fileID: 744999350}
   - component: {fileID: 744999352}
   - component: {fileID: 744999353}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: BreakTile
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3681,9 +3681,9 @@ GameObject:
   - component: {fileID: 1612195972}
   - component: {fileID: 1612195974}
   - component: {fileID: 1612195975}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: BreakTile (2)
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

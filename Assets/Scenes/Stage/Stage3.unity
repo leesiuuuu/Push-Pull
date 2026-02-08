@@ -951,6 +951,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: NewTrampoline (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 9137917270750774115, guid: c32a81e818eef544899075483b711557, type: 3}
+      propertyPath: JumpPower
+      value: 40
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -4091,8 +4091,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd94320b68c37794998965bab40723a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pos1: {x: 0, y: 9, z: 0}
-  pos2: {x: 0, y: -2, z: 0}
+  pos1: {x: 0, y: 8, z: 0}
+  pos2: {x: 0, y: 0, z: 0}
   speed: 3
   waitTime: 0.5
 --- !u!19719996 &1944225975

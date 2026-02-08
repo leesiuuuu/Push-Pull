@@ -586,6 +586,7 @@ GameObject:
   - component: {fileID: 175300867}
   - component: {fileID: 175300866}
   - component: {fileID: 175300865}
+  - component: {fileID: 175300868}
   m_Layer: 6
   m_Name: HoldTile
   m_TagString: Ground
@@ -606,7 +607,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2052206687}
   - {fileID: 387585353}
   m_Father: {fileID: 1559343180}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -860,6 +860,21 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!114 &175300868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 175300863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5dce28c188af314bb33f63051f1b32a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  holdTile: {fileID: 175300864}
+  speed: 3
+  pushPos: {x: 0, y: 6, z: 0}
 --- !u!1 &311058874
 GameObject:
   m_ObjectHideFlags: 0
@@ -1119,7 +1134,7 @@ Transform:
   m_GameObject: {fileID: 387585352}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.506, y: 0.723, z: 0}
+  m_LocalPosition: {x: 3.506, y: 0.91200006, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1180,9 +1195,7 @@ LineRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Positions:
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 11.69, z: 1}
+  m_Positions: []
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1
@@ -3166,7 +3179,7 @@ Transform:
   m_GameObject: {fileID: 617476614}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 9.86, z: 0}
+  m_LocalPosition: {x: 0, y: 9, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3184,10 +3197,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd94320b68c37794998965bab40723a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pos1: {x: 0, y: 14.79, z: 0}
-  pos2: {x: 0, y: -1.98, z: 0}
-  speed: 3
-  waitTime: 0.2
+  pos1: {x: 0, y: 9, z: 0}
+  pos2: {x: 0, y: -1, z: 0}
+  speed: 2
+  waitTime: 0.4
 --- !u!19719996 &617476617
 TilemapCollider2D:
   m_ObjectHideFlags: 0
@@ -3514,8 +3527,8 @@ Transform:
   m_GameObject: {fileID: 724855736}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 18.526669, y: 2.82, z: 0}
-  m_LocalScale: {x: 0.06666666, y: 10.95, z: 1}
+  m_LocalPosition: {x: 18.5, y: 2.5641, z: 0}
+  m_LocalScale: {x: 0.06666666, y: 10.438635, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1559343180}
@@ -4712,6 +4725,7 @@ Transform:
   - {fileID: 724855737}
   - {fileID: 1441704304}
   - {fileID: 434236344}
+  - {fileID: 2052206687}
   - {fileID: 175300864}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4762,9 +4776,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88a86c8bfe40f9f40881cba42e8cb285, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  holdTile: {fileID: 175300864}
-  speed: 2
-  pushPos: {x: 0, y: 9.05, z: 0}
+  controller: {fileID: 175300868}
 --- !u!95 &1590703805
 Animator:
   serializedVersion: 5
@@ -6370,7 +6382,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 175300864}
+  m_Father: {fileID: 1559343180}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2063156826
 GameObject:
