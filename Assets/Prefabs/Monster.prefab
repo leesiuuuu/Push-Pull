@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 118702144333312153}
   - component: {fileID: 6769499760527032245}
   - component: {fileID: 3486759381895282789}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Monster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -126,9 +126,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ae495de59b80834883bb775ce0213f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pos1: {x: 49.58, y: 11.8, z: 0}
-  pos2: {x: 46.31, y: 11.8, z: 0}
   speed: 0.5
+  frontCheckDistance: 0.79
+  groundCheckDistance: 1.5
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!58 &3486759381895282789
 CircleCollider2D:
   m_ObjectHideFlags: 0
