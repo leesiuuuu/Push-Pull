@@ -59,7 +59,6 @@ public class Grab : MonoBehaviour
     {
         if (grabing == false)
         {
-            Debug.Log("ndjsvnirowangvifneaiorioejagi");
             StartCoroutine(GoGrab());
             grabing = true;
         }
@@ -67,9 +66,10 @@ public class Grab : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+
         if (collision.gameObject.CompareTag("Player"))
         {
-            if (!GrabPlayer)
+            if (!collision.gameObject.GetComponentInChildren<Grab>().GrabPlayer)
             {
                 GrabPlayer = true;
                 if (grabing)
