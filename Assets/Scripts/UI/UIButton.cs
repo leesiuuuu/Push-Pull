@@ -1,46 +1,39 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using System.Collections;
+using UnityEngine.Events;
 
 public class UIButton : Button
 {
-    private EventSystem _eventSystem;
-
-    protected override void Awake()
-    {
-        base.Awake();
-        _eventSystem = EventSystem.current;
-    }
+    public AudioClip clickSound;
+    public AudioClip hoverSound;
+    public UnityEvent OnClicked;
 
     public override void OnPointerEnter(PointerEventData eventData)
     {
         base.OnPointerEnter(eventData);
-        Debug.Log($"{name} 버튼에 마우스 들어감 (PointerEnter)");
+        // 호버 사운드 재생
     }
 
     public override void OnSelect(BaseEventData eventData)
     {
         base.OnSelect(eventData);
-        Debug.Log($"{name} 버튼 선택됨 (Highlighted)");
-        // 여기에 선택 시 연출 추가
-    }
-
-    public override void OnDeselect(BaseEventData eventData)
-    {
-        base.OnDeselect(eventData);
-        Debug.Log($"{name} 버튼 선택 해제됨");
+        // 호버 사운드 재생
     }
 
     public override void OnPointerClick(PointerEventData eventData)
     {
         base.OnPointerClick(eventData);
+        // 클릭 사운드 재생
+        OnClicked?.Invoke();
         Debug.Log($"{name} 버튼 클릭됨 (PointerClick)");
     }
 
     public override void OnSubmit(BaseEventData eventData)
     {
         base.OnSubmit(eventData);
+        // 클릭 사운드 재생
+        OnClicked?.Invoke();
         Debug.Log($"{name} 버튼 클릭됨 (Submit)");
     }
 }
