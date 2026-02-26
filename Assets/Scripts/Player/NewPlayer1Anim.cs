@@ -3,16 +3,14 @@ using UnityEngine;
 public class NewPlayer1Anim : MonoBehaviour
 {
     Animator anim;
-    NewPlayer1 player;
-    NewPlayer1Grab grab;
+    InputPlayer player;
 
     bool playanim;
 
     private void Awake()
     {
-        player = GetComponent<NewPlayer1>();
+        player = GetComponent<InputPlayer>();
         anim = GetComponent<Animator>();
-        grab = GetComponentInChildren<NewPlayer1Grab>();
     }
 
     private void Update()

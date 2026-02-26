@@ -21,16 +21,20 @@ public class MoveTile : MonoBehaviour
     {
         while (true)
         {
-            yield return null;
-            if ((desPos - transform.position).magnitude < 0.05f)
+            transform.localPosition =
+                Vector3.MoveTowards(
+                    transform.localPosition,
+                    desPos,
+                    speed * Time.deltaTime
+                );
+
+            if (Vector3.Distance(transform.localPosition, desPos) < 0.01f * (speed + 1))
             {
+                yield return new WaitForSeconds(waitTime);
                 desPos = desPos == pos1 ? pos2 : pos1;
-                yield return new WaitForSeconds(0.3f);
             }
-            else
-            {
-                transform.position += (desPos - transform.position).normalized * speed * Time.deltaTime;
-            }
+
+            yield return null;
         }
     }
 

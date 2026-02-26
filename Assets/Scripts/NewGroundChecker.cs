@@ -9,18 +9,9 @@ public class NewGroundCheck : MonoBehaviour
 
         if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("interactive"))
         {
-            if (transform.parent.TryGetComponent<NewPlayer1>(out NewPlayer1 player1))
+            if (transform.parent.TryGetComponent<InputPlayer>(out InputPlayer player))
             {
-                player1.jumpAble = true;
-            }
-        }
-
-        if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("interactive"))
-        {
-
-            if (transform.parent.TryGetComponent<NewPlayer2>(out NewPlayer2 player2))
-            {
-                player2.jumpAble = true;
+                player.jumpAble = true;
             }
         }
     }

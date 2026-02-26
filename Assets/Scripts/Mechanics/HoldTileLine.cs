@@ -19,6 +19,7 @@ public class HoldTileLine : MonoBehaviour
         while (true)
         {
             yield return null;
+            lineRenderer.positionCount = 2;
             lineRenderer.SetPosition(0, transform.position);
             lineRenderer.SetPosition(1, desPos.position);
         }
