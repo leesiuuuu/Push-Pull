@@ -24,7 +24,15 @@ public class UIButton : Button
 
     public override void OnPointerEnter(PointerEventData eventData)
     {
+        if (UIInputManager.instance != null &&
+            UIInputManager.instance.currentDevice != InputDeviceType.Mouse)
+        {
+            eventData.selectedObject = null;
+            return;
+        }
+
         base.OnPointerEnter(eventData);
+        eventData.selectedObject = gameObject;
         // 호버 사운드 재생
     }
 

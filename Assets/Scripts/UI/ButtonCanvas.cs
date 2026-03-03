@@ -1,6 +1,7 @@
 using DG.Tweening;
-using System.Collections.Generic;
+using UnityEngine.EventSystems;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ButtonCanvas : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class ButtonCanvas : MonoBehaviour
     }
     [SerializeField] private bool isMainCanva = false;
     [SerializeField] private float fadeDuration = 0.2f;
+    [SerializeField] private Button firstSelectButton;
 
     private CanvasGroup canvasGroup;
     private Canvas canvas;
@@ -29,8 +31,13 @@ public class ButtonCanvas : MonoBehaviour
         else DisableCanvas();
     }
 
+    private void Update()
+    {
+        canvasGroup.blocksRaycasts = UIInputManager.instance.currentDevice == InputDeviceType.Mouse;
+    }
     public void EnableCanvas()
     {
+        firstSelectButton.Select();
         canvas.enabled = true;
         canvasGroup.alpha = 0f;
         FadeOut();
