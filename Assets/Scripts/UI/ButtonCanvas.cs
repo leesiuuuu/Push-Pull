@@ -4,14 +4,18 @@ using UnityEngine;
 
 public class ButtonCanvas : MonoBehaviour
 {
-    public List<UIButton> Buttons = new List<UIButton>();
-
+    public bool MainCanvas
+    {
+        get
+        {
+            return isMainCanva;
+        }
+    }
     [SerializeField] private bool isMainCanva = false;
     [SerializeField] private float fadeDuration = 0.2f;
 
     private CanvasGroup canvasGroup;
     private Canvas canvas;
-    private UIButton firstSelectButton;
 
     private void Awake()
     {
@@ -22,13 +26,20 @@ public class ButtonCanvas : MonoBehaviour
     private void Start()
     {
         if (isMainCanva) EnableCanvas();
+        else DisableCanvas();
     }
 
     public void EnableCanvas()
     {
         canvas.enabled = true;
-        firstSelectButton = Buttons[0];
+        canvasGroup.alpha = 0f;
         FadeOut();
+    }
+
+    public void DisableCanvas()
+    {
+        canvas.enabled = false;
+        canvasGroup.alpha = 0f;
     }
     
     public void FadeOut()

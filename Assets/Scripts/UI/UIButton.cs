@@ -1,9 +1,8 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using UnityEngine.Events;
-using Unity.VisualScripting;
 using System.Collections;
+using System.Linq;
 
 public class UIButton : Button
 {
@@ -14,6 +13,14 @@ public class UIButton : Button
     [SerializeField] private  ButtonCanvas enableCanvas;        // 활성화 할(보이게 할 캔버스) 오브젝트
 
     [SerializeField] private ButtonType buttonType;
+
+    protected override void Start()
+    {
+        if(buttonType != ButtonType.ChangeCanvas)
+        {
+            disableCanvas = GetComponentInParent<ButtonCanvas>();
+        }
+    }
 
     public override void OnPointerEnter(PointerEventData eventData)
     {
@@ -49,6 +56,9 @@ public class UIButton : Button
         {
             case ButtonType.ChangeCanvas:
                 changeCanvas(); break;
+            case ButtonType.GoMain:
+                enableCanvas = FindObjectsOfType<ButtonCanvas>().Where(canvas => canvas.MainCanvas == true).First();
+                changeCanvas(); break;
         }
     }
 
@@ -70,6 +80,6 @@ public enum ButtonType
     ClosePopup,     // 현재 팝업을 닫음
     Submit,         // 데이터 확인, 아이템 구매 등 서버/데이터 연동
     GameStart,      // 씬 전환 (Scene Load)
-    Toggle,         // On/Off 상태 전환 (체크박스 스타일)
+    GoMain,
     Quit            // 게임 종료
 }
