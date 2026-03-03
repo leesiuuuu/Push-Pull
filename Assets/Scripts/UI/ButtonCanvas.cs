@@ -35,6 +35,8 @@ public class ButtonCanvas : MonoBehaviour
     {
         canvasGroup.blocksRaycasts = UIInputManager.instance.currentDevice == InputDeviceType.Mouse;
     }
+
+    // 캔버스를 활성화시키고 효과 및 첫 선택 버튼을 설정
     public void EnableCanvas()
     {
         firstSelectButton.Select();
@@ -43,6 +45,7 @@ public class ButtonCanvas : MonoBehaviour
         FadeOut();
     }
 
+    // 캔버스를 비활성화 시키고 알파를 0으로 바꿈
     public void DisableCanvas()
     {
         canvas.enabled = false;
