@@ -246,6 +246,9 @@ MonoBehaviour:
       m_Calls: []
   clickSound: {fileID: 0}
   hoverSound: {fileID: 0}
+  disableCanvas: {fileID: 2002665543}
+  enableCanvas: {fileID: 994916237}
+  buttonType: 1
 --- !u!1 &71912398
 GameObject:
   m_ObjectHideFlags: 0
@@ -624,6 +627,9 @@ MonoBehaviour:
       m_Calls: []
   clickSound: {fileID: 0}
   hoverSound: {fileID: 0}
+  disableCanvas: {fileID: 0}
+  enableCanvas: {fileID: 0}
+  buttonType: 0
 --- !u!1 &128934763
 GameObject:
   m_ObjectHideFlags: 0
@@ -1319,6 +1325,9 @@ MonoBehaviour:
       m_Calls: []
   clickSound: {fileID: 0}
   hoverSound: {fileID: 0}
+  disableCanvas: {fileID: 0}
+  enableCanvas: {fileID: 0}
+  buttonType: 0
 --- !u!1 &196572009
 GameObject:
   m_ObjectHideFlags: 0
@@ -5133,13 +5142,15 @@ GameObject:
   - component: {fileID: 994916234}
   - component: {fileID: 994916233}
   - component: {fileID: 994916232}
+  - component: {fileID: 994916236}
+  - component: {fileID: 994916237}
   m_Layer: 5
   m_Name: MultiCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &994916232
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5187,7 +5198,7 @@ Canvas:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 994916231}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_RenderMode: 1
   m_Camera: {fileID: 417322892}
@@ -5225,6 +5236,35 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!225 &994916236
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 994916231}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &994916237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 994916231}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfa2d91a1d15b844e995ca17ae9bfcc8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Buttons:
+  - {fileID: 1520569060}
+  - {fileID: 1448491633}
+  isMainCanva: 0
+  fadeDuration: 0.2
 --- !u!1 &997670389
 GameObject:
   m_ObjectHideFlags: 0
@@ -6727,6 +6767,7 @@ GameObject:
   - component: {fileID: 1448491630}
   - component: {fileID: 1448491632}
   - component: {fileID: 1448491631}
+  - component: {fileID: 1448491633}
   m_Layer: 5
   m_Name: Slot (1)
   m_TagString: Untagged
@@ -6749,9 +6790,9 @@ RectTransform:
   - {fileID: 138145274}
   m_Father: {fileID: 918456904}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1044.9199, y: -300}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 450, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1448491631
@@ -6792,6 +6833,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1448491629}
   m_CullTransparentMesh: 1
+--- !u!114 &1448491633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1448491629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5af8801c82f3614892e87634c79315c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 1, g: 0.8392157, b: 0, a: 1}
+    m_PressedColor: {r: 1, g: 1, b: 1, a: 1}
+    m_SelectedColor: {r: 1, g: 0.8392157, b: 0, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 90592028}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
+  clickSound: {fileID: 0}
+  hoverSound: {fileID: 0}
+  disableCanvas: {fileID: 0}
+  enableCanvas: {fileID: 0}
+  buttonType: 0
 --- !u!1 &1464185445
 GameObject:
   m_ObjectHideFlags: 0
@@ -6937,6 +7027,7 @@ GameObject:
   - component: {fileID: 1520569057}
   - component: {fileID: 1520569059}
   - component: {fileID: 1520569058}
+  - component: {fileID: 1520569060}
   m_Layer: 5
   m_Name: Slot
   m_TagString: Untagged
@@ -6959,9 +7050,9 @@ RectTransform:
   - {fileID: 1639482284}
   m_Father: {fileID: 918456904}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 494.91998, y: -300}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 450, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1520569058
@@ -7002,6 +7093,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1520569056}
   m_CullTransparentMesh: 1
+--- !u!114 &1520569060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1520569056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5af8801c82f3614892e87634c79315c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 1, g: 0.8392157, b: 0, a: 1}
+    m_PressedColor: {r: 1, g: 1, b: 1, a: 1}
+    m_SelectedColor: {r: 1, g: 0.8392157, b: 0, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 90592028}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
+  clickSound: {fileID: 0}
+  hoverSound: {fileID: 0}
+  disableCanvas: {fileID: 0}
+  enableCanvas: {fileID: 0}
+  buttonType: 0
 --- !u!1 &1585023471
 GameObject:
   m_ObjectHideFlags: 0
@@ -7125,6 +7265,9 @@ MonoBehaviour:
       m_Calls: []
   clickSound: {fileID: 0}
   hoverSound: {fileID: 0}
+  disableCanvas: {fileID: 0}
+  enableCanvas: {fileID: 0}
+  buttonType: 0
 --- !u!1 &1639482283
 GameObject:
   m_ObjectHideFlags: 0
@@ -8213,6 +8356,7 @@ GameObject:
   - component: {fileID: 2002665540}
   - component: {fileID: 2002665539}
   - component: {fileID: 2002665543}
+  - component: {fileID: 2002665544}
   m_Layer: 5
   m_Name: MainCanvas
   m_TagString: Untagged
@@ -8321,6 +8465,20 @@ MonoBehaviour:
   - {fileID: 23850196}
   - {fileID: 1585023476}
   - {fileID: 180346372}
+  isMainCanva: 1
+  fadeDuration: 0.2
+--- !u!225 &2002665544
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2002665538}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &2118868444
 GameObject:
   m_ObjectHideFlags: 0
