@@ -1,18 +1,11 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class EndPointSO : MonoBehaviour
+[CreateAssetMenu]
+public class EndPointSO : ScriptableObject
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    [field: SerializeField]
+    public string Login { get; set; } = "login";
+    [field: SerializeField]
+    public string Logout { get; set; } = "logout";
 }
