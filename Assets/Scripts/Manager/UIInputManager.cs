@@ -74,8 +74,11 @@ public class UIInputManager : MonoBehaviour
     {        
         if (currentDevice == newType) return; // 이미 해당 모드라면 무시
 
+        bool isTypeMouse = (newType == InputDeviceType.Mouse);
+
         // 키보드 모드일 때 커서를 숨기고 싶다면:
-        Cursor.visible = (newType == InputDeviceType.Mouse);
+        Cursor.visible = isTypeMouse;
+        // Cursor.lockState = isTypeMouse ? CursorLockMode.Locked : CursorLockMode.None;
 
         currentDevice = newType;
 
