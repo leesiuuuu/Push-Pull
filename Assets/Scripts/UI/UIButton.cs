@@ -12,6 +12,9 @@ public class UIButton : Button
     [SerializeField] private ButtonCanvas disableCanvas;        // 비활성화 할(보이지 않게 할 캔버스) 오브젝트
     [SerializeField] private  ButtonCanvas enableCanvas;        // 활성화 할(보이게 할 캔버스) 오브젝트
 
+    [SerializeField] private ButtonPanel disablePanel;          // 비활성화 할(보이지 않게 할 캔버스) 오브젝트
+    [SerializeField] private ButtonPanel enablePanel;           // 활성화 할(보이게 할 캔버스) 오브젝트
+
     [SerializeField] private ButtonType buttonType;
 
     protected override void Start()
@@ -64,6 +67,8 @@ public class UIButton : Button
         {
             case ButtonType.ChangeCanvas:
                 changeCanvas(); break;
+            case ButtonType.ChangePanel:
+                changePanel(); break;
             case ButtonType.GoMain:
                 enableCanvas = FindObjectsOfType<ButtonCanvas>().Where(canvas => canvas.MainCanvas == true).First();
                 changeCanvas(); break;
@@ -71,6 +76,7 @@ public class UIButton : Button
     }
 
     private void changeCanvas() => StartCoroutine(changeCanvasCoroutine());
+    private void changePanel() => StartCoroutine(changePanelCoroutine());
 
     private IEnumerator changeCanvasCoroutine()
     {
@@ -78,12 +84,20 @@ public class UIButton : Button
         yield return new WaitForSeconds(0.2f);
         enableCanvas.EnableCanvas();
     }
+
+    private IEnumerator changePanelCoroutine()
+    {
+        disablePanel.DisablePanel();
+        yield return new WaitForSeconds(0.2f);
+        enablePanel.EnablePanel();
+    }
 }
 
 public enum ButtonType
 {
     None,           // 기본 (소리만 나거나 단순 클릭 로그용)
     ChangeCanvas,   // 현재 창을 끄고 다른 창을 엶 (UI 이동)
+    ChangePanel,    // 현재 패널을 끄고 다른 패널을 엶 (UI 이동)
     OpenPopup,      // 현재 창은 두고 위에 팝업을 띄움
     ClosePopup,     // 현재 팝업을 닫음
     Submit,         // 데이터 확인, 아이템 구매 등 서버/데이터 연동

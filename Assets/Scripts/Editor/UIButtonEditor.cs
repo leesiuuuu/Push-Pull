@@ -12,6 +12,8 @@ public class UIButtonEditor : ButtonEditor
     SerializedProperty typeProp;
     SerializedProperty disableObjectProp;
     SerializedProperty enableObjectProp;
+    SerializedProperty disablePanelProp;
+    SerializedProperty enablePanelProp;
 
     protected override void OnEnable()
     {
@@ -21,6 +23,8 @@ public class UIButtonEditor : ButtonEditor
         hoverSoundProp = serializedObject.FindProperty("hoverSound");
         disableObjectProp = serializedObject.FindProperty("disableCanvas");
         enableObjectProp = serializedObject.FindProperty("enableCanvas");
+        disablePanelProp = serializedObject.FindProperty("disablePanel");
+        enablePanelProp = serializedObject.FindProperty("enablePanel");
         typeProp = serializedObject.FindProperty("buttonType");
     }
 
@@ -52,6 +56,11 @@ public class UIButtonEditor : ButtonEditor
                 EditorGUILayout.HelpBox("현재 버튼의 캔버스를 끄고 새로운 캔버스를 킵니다.", MessageType.Info);
                 EditorGUILayout.PropertyField(disableObjectProp, new GUIContent("Canvas to Disable"));
                 EditorGUILayout.PropertyField(enableObjectProp, new GUIContent("Canvas to Enable"));
+                break;
+            case ButtonType.ChangePanel:
+                EditorGUILayout.HelpBox("현재 버튼의 패널을 끄고 새로운 패널을 킵니다.", MessageType.Info);
+                EditorGUILayout.PropertyField(disablePanelProp, new GUIContent("Panel to Disable"));
+                EditorGUILayout.PropertyField(enablePanelProp, new GUIContent("Panel to Enable"));
                 break;
 
             case ButtonType.OpenPopup:
