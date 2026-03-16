@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Project-YOYO.sln"
+    "dotnet.defaultSolution": "Push-Pull.sln"
 }

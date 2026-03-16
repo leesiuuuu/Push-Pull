@@ -14,9 +14,9 @@ public static class APIConnector
         return SendRequest<T>(endpoint, "GET");
     }
 
-    public static UniTask<T> Post<T>(string endpoint, object body)
+    public static UniTask<T> Post<T>(string endpoint, object body, bool needSession = false)
     {
-        return SendRequest<T>(endpoint, "POST", body);
+        return SendRequest<T>(endpoint, "POST", body, needSession);
     }
 
     public static UniTask<T> Patch<T>(string endpoint)

@@ -5,7 +5,7 @@ using UnityEngine;
 public class EndPointSO : ScriptableObject
 {
     [field: SerializeField]
-    public string Login { get; set; } = "login";
+    public string Login { get; set; } = "auth/login";
     [field: SerializeField]
-    public string Logout { get; set; } = "logout";
+    public string Logout { get; set; } = "auth/logout";
 }

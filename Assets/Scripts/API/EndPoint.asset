@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 109003dc6c282dc4091c164ce7e68eb5, type: 3}
   m_Name: EndPoint
   m_EditorClassIdentifier: 
-  <Login>k__BackingField: login
-  <Logout>k__BackingField: logout
+  <Login>k__BackingField: auth/login
+  <Logout>k__BackingField: auth/logout
