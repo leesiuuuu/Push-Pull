@@ -1,3 +1,4 @@
+[System.Serializable]
 public class CreateRoomResponse
 {
     public string roomCode;

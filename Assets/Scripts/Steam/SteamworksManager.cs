@@ -3,6 +3,7 @@ using UnityEngine;
 using Cysharp.Threading.Tasks;
 using System;
 using Unity.VisualScripting;
+using UnityEditor;
 
 public class SteamworksManager : SingleMono<SteamworksManager>
 {
@@ -19,6 +20,11 @@ public class SteamworksManager : SingleMono<SteamworksManager>
     {
         base.Awake();
         InitSteam(true);
+    }
+
+    private void OnDisable()
+    {
+        Logout().Forget();
     }
 
     private void OnApplicationQuit()
@@ -126,16 +132,26 @@ public class SteamworksManager : SingleMono<SteamworksManager>
 
         LoginRequest body = new LoginRequest
         {
-            steamTicket = GetAuthSessionTicket(),
+            steamTicket = await GetAuthSessionTicket(),
             nickName = GetPersonaName()
         };
 
-        Debug.Log(body.steamTicket);
+        //Debug.Log(body.steamTicket);
+        //Debug.Log(body.nickName);
 
         try
         {
-            var result = await APIConnector.Post<Response<string>>(EndpointSO.Login, body);
-            OnLoginSuccess(result.Data);
+            var result = await APIConnector.Post<LoginResponse>(EndpointSO.Login, body);
+
+            //if (result == null || result.Data == null)
+            //{
+            //    Debug.LogError("서버 응답이나 Data가 Null입니다.");   
+            //    Debug.Log(result);
+            //    Debug.Log(result.Data);
+            //    return;
+            //}
+
+            OnLoginSuccess(result.SessionId);
         }
         catch (Exception e)
         {
@@ -149,7 +165,7 @@ public class SteamworksManager : SingleMono<SteamworksManager>
 
         try
         {
-            var result = await APIConnector.Post<Response<string>>(EndpointSO.Logout, null, false);
+            var result = await APIConnector.Post<string>(EndpointSO.Logout, null, true);
 
             // 로그아웃 성공 시 출력
             Debug.Log("로그아웃 완료");
@@ -180,22 +196,38 @@ public class SteamworksManager : SingleMono<SteamworksManager>
 
     // private CSteamID GetSteamID() => SteamUser.GetSteamID();
     private string GetPersonaName() => SteamFriends.GetPersonaName();
-    private string GetAuthSessionTicket()
+    private async UniTask<string> GetAuthSessionTicket()
     {
         byte[] ticketBuffer = new byte[1024];
-        uint ticketSize;
+        uint ticketSize = 0;
         SteamNetworkingIdentity identity = default;
 
-        HAuthTicket authTicket = SteamUser.GetAuthSessionTicket(ticketBuffer, ticketBuffer.Length, out ticketSize, ref identity);
+        var tcs = new UniTaskCompletionSource<string>();
+        Callback<GetAuthSessionTicketResponse_t> callback = null;
 
-        byte[] ticket = new byte[ticketSize];
+        callback = Callback<GetAuthSessionTicketResponse_t>.Create(response =>
+        {
+            if (response.m_eResult == EResult.k_EResultOK)
+            {
+                byte[] ticket = new byte[ticketSize];
+                System.Array.Copy(ticketBuffer, ticket, ticketSize);
+                string ticketHex = BitConverter.ToString(ticket).Replace("-", "");
+                tcs.TrySetResult(ticketHex);
+            }
+            else
+            {
+                tcs.TrySetException(new Exception("티켓 발급 실패: " + response.m_eResult));
+            }
+            callback?.Dispose(); // 콜백 해제
+        });
 
-        // 티켓 데이터 복사
-        System.Array.Copy(ticketBuffer, ticket, ticketSize);
+        SteamUser.GetAuthSessionTicket(ticketBuffer, ticketBuffer.Length, out ticketSize, ref identity);
 
-        // Hex 문자열로 변환
-        string ticketHex = System.BitConverter.ToString(ticket).Replace("-", "");
-        return ticketHex;
+        // 타임아웃 5초 추가 (선택)
+        var timeout = UniTask.Delay(5000).ContinueWith(() =>
+            tcs.TrySetException(new Exception("Steam 티켓 발급 타임아웃")));
+
+        return await tcs.Task;
     }
     #endregion
 }

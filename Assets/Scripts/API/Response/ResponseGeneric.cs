@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 
+[System.Serializable]
 public class Response<T>
 {
     [JsonProperty("errorCode")]

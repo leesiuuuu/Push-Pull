@@ -1,3 +1,4 @@
+[System.Serializable]
 public class GetRoomInfoResponse
 {
     public string roomName;
