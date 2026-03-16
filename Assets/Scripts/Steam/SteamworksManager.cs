@@ -2,15 +2,23 @@ using Steamworks;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 using System;
+using Unity.VisualScripting;
 
 public class SteamworksManager : SingleMono<SteamworksManager>
 {
     public EndPointSO EndpointSO;
     public bool IsInitialized { get; private set; } = false;
+
+    private Callback<LobbyCreated_t> CALLBACK_lobbyCreated;
+
+
+    private string roomNameTemp;
+    private string roomPasswordTemp;
+
     protected override void Awake()
     {
         base.Awake();
-        InitSteam();
+        InitSteam(true);
     }
 
     private void OnApplicationQuit()
@@ -18,7 +26,7 @@ public class SteamworksManager : SingleMono<SteamworksManager>
         Logout().Forget();
     }
 
-    private void InitSteam()
+    private void InitSteam(bool isLogin = false)
     {
         try
         {
@@ -34,7 +42,7 @@ public class SteamworksManager : SingleMono<SteamworksManager>
             Debug.Log("[Steam] Initialized Successfully");
 
             // 초기화 완료. 로그인을 실행합니다.
-            Login().Forget();
+            if(isLogin) Login().Forget();
         }
         catch (Exception e)
         {
@@ -42,7 +50,71 @@ public class SteamworksManager : SingleMono<SteamworksManager>
         }
     }
 
-    #region 
+    #region 방 생성/입장 함수
+    
+    public async UniTask CreateRoom(string roomName, bool isPrivate, string password)
+    {
+        if (!IsInitialized) InitSteam();
+
+        roomNameTemp = roomName;
+        roomPasswordTemp = password;
+
+        ELobbyType lobbyType = isPrivate ? ELobbyType.k_ELobbyTypePrivate : ELobbyType.k_ELobbyTypePublic;
+
+        Debug.Log($"[Steam] 로비 생성 요청 중... (이름: {roomName})");
+
+        CSteamID lobbyID = await CreateLobbyAsync(lobbyType);
+
+        if (lobbyID == CSteamID.Nil)
+        {
+            Debug.LogError("[Steam] 로비 생성 실패");
+            return;
+        }
+
+        // 로비 메타데이터 설정
+        SteamMatchmaking.SetLobbyData(lobbyID, "name", roomName);
+
+        if (!string.IsNullOrEmpty(password))
+        {
+            SteamMatchmaking.SetLobbyData(lobbyID, "isPasswordProtected", "true");
+            SteamMatchmaking.SetLobbyData(lobbyID, "password", password);
+        }
+        else
+        {
+            SteamMatchmaking.SetLobbyData(lobbyID, "isPasswordProtected", "false");
+        }
+
+        SteamMatchmaking.SetLobbyData(lobbyID, "HostSteamID", SteamUser.GetSteamID().ToString());
+
+        Debug.Log($"[Steam] 로비 생성 성공! ID: {lobbyID}");
+
+    }
+
+    private UniTask<CSteamID> CreateLobbyAsync(ELobbyType lobbyType)
+    {
+        var completionSource = new UniTaskCompletionSource<CSteamID>();
+
+        CallResult<LobbyCreated_t> callResult = new CallResult<LobbyCreated_t>();
+
+        callResult.Set(
+            SteamMatchmaking.CreateLobby(lobbyType, 2),
+            (result, bIOFailture) =>
+            {
+                callResult.Dispose();
+
+                if (bIOFailture || result.m_eResult != EResult.k_EResultOK)
+                {
+                    Debug.LogError($"[Steam] 로비 생성 실패: {result.m_eResult}");
+                    completionSource.TrySetResult(CSteamID.Nil);
+                    return;
+                }
+
+                completionSource.TrySetResult(new CSteamID(result.m_ulSteamIDLobby));
+            }
+        );
+
+        return completionSource.Task;
+    }
 
     #endregion
 
