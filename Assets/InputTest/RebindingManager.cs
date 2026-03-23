@@ -16,27 +16,21 @@ public class RebindingManager : MonoBehaviour
         "UIControll"
     };
 
-    public void StartRebinding(InputActionReference actionReference, string controlScheme = "Keyboard&Mouse")
+    public void StartRebinding(InputActionReference actionReference, string controlScheme)
     {
         if (actionReference == null) return;
 
-        Debug.Log("1");
 
         InputAction action = actionReference.action;
 
         if (_lockedActions.Contains(action.name)) return;
 
-        Debug.Log("2");
 
         int bindingIndex = action.GetBindingIndex(
             InputBinding.MaskByGroup(controlScheme)
         );
 
-        if (bindingIndex == -1)
-        {
-            Debug.LogWarning($"[{action.name}] {controlScheme} 바인딩 없음");
-            return;
-        }
+        if (bindingIndex == -1) return;
 
         action.Disable();
 
@@ -55,14 +49,12 @@ public class RebindingManager : MonoBehaviour
                 _rebindOperation?.Dispose();
                 _rebindOperation = null;
                 SaveBindings();
-                Debug.Log($"[{action.name}] [{controlScheme}] 리바인딩 완료: {action.bindings[bindingIndex].effectivePath}");
             })
             .OnCancel(operation =>
             {
                 action.Enable();
                 _rebindOperation?.Dispose();
                 _rebindOperation = null;
-                Debug.Log($"[{action.name}] 리바인딩 취소");
             })
             .Start();
     }
