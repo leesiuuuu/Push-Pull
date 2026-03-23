@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class InputPlayer : MonoBehaviour
 {
     [SerializeField] private ExChargeUi UI;
+    [SerializeField] private SoundManager soundManager;
 
     public PlayerInput playerInput;
     public Transform grabObject;
