@@ -8,6 +8,8 @@ public class RebindingManager : MonoBehaviour
 
     private InputActionRebindingExtensions.RebindingOperation _rebindOperation;
 
+    private const string InputBindingsKey = "InputBindings";
+
     private readonly HashSet<string> _lockedActions = new HashSet<string>
     {
         "Move",
@@ -72,14 +74,14 @@ public class RebindingManager : MonoBehaviour
     private void SaveBindings()
     {
         string json = inputActions.SaveBindingOverridesAsJson();
-        PlayerPrefs.SetString("InputBindings", json);
+        PlayerPrefs.SetString(InputBindingsKey, json);
         PlayerPrefs.Save();
     }
 
     public void LoadBindings()
     {
-        if (PlayerPrefs.HasKey("InputBindings"))
-            inputActions.LoadBindingOverridesFromJson(PlayerPrefs.GetString("InputBindings"));
+        if (PlayerPrefs.HasKey(InputBindingsKey))
+            inputActions.LoadBindingOverridesFromJson(PlayerPrefs.GetString(InputBindingsKey));
     }
 
     private void OnDestroy() => _rebindOperation?.Dispose();
