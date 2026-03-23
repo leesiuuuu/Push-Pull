@@ -681,7 +681,6 @@ GameObject:
   - component: {fileID: 4599138075380840851}
   - component: {fileID: 1826054566949650107}
   - component: {fileID: 1092455675999686193}
-  - component: {fileID: 1634835860429396038}
   m_Layer: 0
   m_Name: Player1Grab
   m_TagString: Player1Grab
@@ -908,24 +907,6 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
---- !u!114 &1634835860429396038
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3592784288518633808}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be002e67fae31be45a40fd3c88ab4e3a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Target: {fileID: 0}
-  addtargetPos: {x: 19, y: 0, z: 0}
-  moveSpeed: 0
-  holdGrab: 0
-  grabing: 0
-  targetingable: 0
 --- !u!1 &4776101192457551186
 GameObject:
   m_ObjectHideFlags: 0
@@ -1506,9 +1487,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6444dce363c08954c9a2875e07136153, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player1: {fileID: 3831218754039041819}
-  player2: {fileID: 0}
-  player: 1
+  Player: {fileID: 0}
   PChargeGage: {fileID: 6200164008288416873}
   PGage: {fileID: 4175584217774624400}
   PGrabRange: {fileID: 6984113391391192970}
