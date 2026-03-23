@@ -44,7 +44,6 @@ public class RebindingManager : MonoBehaviour
             .OnMatchWaitForAnother(0.2f)
             .OnComplete(operation =>
             {
-                Debug.Log(3);
                 action.Enable();
                 _rebindOperation?.Dispose();
                 _rebindOperation = null;
