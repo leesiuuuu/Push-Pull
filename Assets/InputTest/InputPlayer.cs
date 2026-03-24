@@ -108,9 +108,20 @@ public class InputPlayer : MonoBehaviour
     }
 
 
-    public void OnMove(InputAction.CallbackContext context)
+    public void OnMoveLeft(InputAction.CallbackContext context)
     {
-        moveInput = context.ReadValue<Vector2>();
+        if (context.started || context.performed)
+            moveInput = Vector2.left;
+        else if (context.canceled)
+            moveInput = Vector2.zero;
+    }
+
+    public void OnMoveRight(InputAction.CallbackContext context)
+    {
+        if (context.started || context.performed)
+            moveInput = Vector2.right;
+        else if (context.canceled)
+            moveInput = Vector2.zero;
     }
 
     public void OnJump(InputAction.CallbackContext context)
