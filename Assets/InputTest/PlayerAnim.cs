@@ -7,7 +7,7 @@ public class PlayerAnim : MonoBehaviour
     Animator anim;
     [SerializeField] private InputPlayer player;
 
-    [SerializeField] public bool playanim;
+    [SerializeField] private bool playanim;
 
     private void Awake()
     {
