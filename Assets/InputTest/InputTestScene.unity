@@ -3803,7 +3803,7 @@ MonoBehaviour:
   uiSelectAction: {fileID: -3470840546805214949, guid: 557217b922235ff4ebadcedaa16d612e, type: 3}
   grabAction: {fileID: 3033347623510374112, guid: 557217b922235ff4ebadcedaa16d612e, type: 3}
   pushAction: {fileID: 3106873801933351263, guid: 557217b922235ff4ebadcedaa16d612e, type: 3}
-  scheme: 1
+  scheme: 0
 --- !u!114 &1125612491
 MonoBehaviour:
   m_ObjectHideFlags: 0
