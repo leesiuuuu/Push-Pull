@@ -42,7 +42,7 @@ public class InputPlayer : MonoBehaviour
     private Vector2 grabControlInput = Vector2.zero;
     public float grabDeadzone = 0.15f;
 
-    private string controlScheme = "Keyboard, Mouse";
+    public string ControlScheme = "Keyboard, Mouse";
 
     void Awake()
     {
@@ -54,7 +54,7 @@ public class InputPlayer : MonoBehaviour
     void OnEnable()
     {
         if (playerInput != null)
-            controlScheme = playerInput.currentControlScheme;
+            ControlScheme = playerInput.currentControlScheme;
     }
 
     void Update()
@@ -70,7 +70,7 @@ public class InputPlayer : MonoBehaviour
         if (GrabHeld) UI.OnGrab();
         else UI.OffGrab();
 
-        if (playerInput != null) controlScheme = playerInput.currentControlScheme;
+        if (playerInput != null) ControlScheme = playerInput.currentControlScheme;
 
         if (isCharging)
         {
@@ -186,7 +186,7 @@ public class InputPlayer : MonoBehaviour
         if (grabObject == null) return;
         if (!isGrabHolding) return;
 
-        bool isKeyboard = controlScheme != null && controlScheme.ToLower().Contains("keyboard");
+        bool isKeyboard = ControlScheme != null && ControlScheme.ToLower().Contains("keyboard");
 
         if (isKeyboard)
         {

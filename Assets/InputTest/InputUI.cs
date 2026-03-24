@@ -13,4 +13,5 @@ public class InputUI : MonoBehaviour
     [SerializeField] private InputActionReference pushAction;      
 
     public void OnClickRebindGrab() => rebindingManager.StartRebinding(grabAction, "Keyboard, Mouse");
+    //public void OnClick-----() => rebindingManager.StartRebinding(---Action, InputPlayer.ControlScheme);
 }
