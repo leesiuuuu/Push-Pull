@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerAnim : MonoBehaviour
 {
     Animator anim;
-    [SerializeField] private InputPlayer player;
+    private InputPlayer player;
 
     [SerializeField] private bool playanim;
 
