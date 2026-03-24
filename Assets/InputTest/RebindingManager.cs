@@ -12,7 +12,6 @@ public class RebindingManager : MonoBehaviour
 
     private readonly HashSet<string> _lockedActions = new HashSet<string>
     {
-        "Move",
         "Menu",
         "GrabControll",
         "UIControll"
