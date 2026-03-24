@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6521442890733610234}
   - component: {fileID: 9118995535521153851}
   - component: {fileID: 6867519119699992807}
-  - component: {fileID: 7385952680103018084}
+  - component: {fileID: 6416290992758479474}
   m_Layer: 0
   m_Name: Player2Grab
   m_TagString: Player2Grab
@@ -240,7 +240,7 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
---- !u!114 &7385952680103018084
+--- !u!114 &6416290992758479474
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -249,7 +249,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 841676087012901352}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aceecdc73403a01448741804bb32c633, type: 3}
+  m_Script: {fileID: 11500000, guid: 4d82f67861abd1243aba1e86bb848988, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Target: {fileID: 0}
@@ -258,6 +258,7 @@ MonoBehaviour:
   holdGrab: 0
   grabing: 0
   targetingable: 0
+  GrabPlayer: 0
 --- !u!1 &1131829641207111788
 GameObject:
   m_ObjectHideFlags: 0
@@ -810,9 +811,10 @@ GameObject:
   - component: {fileID: 4219642175178879016}
   - component: {fileID: 7056042028312160213}
   - component: {fileID: 6519150026009714047}
-  - component: {fileID: 2369459865458287543}
-  - component: {fileID: 696728593566531801}
-  - component: {fileID: 6066187000064921542}
+  - component: {fileID: 412444305621784431}
+  - component: {fileID: 7111912916996499667}
+  - component: {fileID: 6683147627436615884}
+  - component: {fileID: 5523333914444213145}
   m_Layer: 0
   m_Name: Player2
   m_TagString: interactive
@@ -829,7 +831,7 @@ Transform:
   m_GameObject: {fileID: 5477906228450719680}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.67, y: 1.09, z: -0.14750034}
+  m_LocalPosition: {x: -20.7, y: 4.1, z: -0.14750034}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -974,46 +976,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2369459865458287543
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5477906228450719680}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a53e803e6e6fe90448b606061e32d7b3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 4
-  x: 0
-  jumpAble: 1
-  Push: 0
-  flip: 0
-  cantMove: 0
-  pushCharge: 0
-  maxPushCharge: 35
-  chargeTime: 1
-  RotSpeed: 1
-  player2Sounds:
-  - {fileID: 8300000, guid: 2c5292ba5cf254919a6b9e2b18e04f49, type: 3}
-  - {fileID: 8300000, guid: 29bde6326b4c34ad8a12da475f79b50a, type: 3}
-  - {fileID: 8300000, guid: 29bde6326b4c34ad8a12da475f79b50a, type: 3}
-  - {fileID: 8300000, guid: 5039414d94a6e4e70a5ab9e8833e992a, type: 3}
---- !u!114 &696728593566531801
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5477906228450719680}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a6377504b1090549b09a6e03045381f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &6066187000064921542
+--- !u!114 &412444305621784431
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1025,6 +988,183 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e5b30423f6e16d43bd9b9e3ae5e000e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7111912916996499667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5477906228450719680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85b5065e3e1f7fb418f4b19c1b8f517a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UI: {fileID: 8045046126432506304}
+  soundManager: {fileID: 0}
+  PlayerInput: {fileID: 6683147627436615884}
+  GrabObject: {fileID: 199681723346479633}
+  PushGlove: {fileID: 5491000787423246749}
+  GrabGlove: {fileID: 6416290992758479474}
+  Anim: {fileID: 530598904557741320}
+  PlayerSounds:
+  - {fileID: 8300000, guid: 2c5292ba5cf254919a6b9e2b18e04f49, type: 3}
+  - {fileID: 8300000, guid: 29bde6326b4c34ad8a12da475f79b50a, type: 3}
+  - {fileID: 8300000, guid: 29bde6326b4c34ad8a12da475f79b50a, type: 3}
+  - {fileID: 8300000, guid: 5039414d94a6e4e70a5ab9e8833e992a, type: 3}
+  moveSpeed: 4
+  flip: 0
+  flipThreshold: 0.2
+  cantMove: 0
+  jumpAble: 1
+  MaxPushCharge: 35
+  ChargeTime: 1
+  PushCharge: 0
+  Push: 0
+  RotSpeed: 1
+  maxAngle: 20
+  grabDeadzone: 0.15
+  ControlScheme: Keyboard, Mouse
+--- !u!114 &6683147627436615884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5477906228450719680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 557217b922235ff4ebadcedaa16d612e, type: 3}
+  m_NotificationBehavior: 2
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7111912916996499667}
+        m_TargetAssemblyTypeName: InputPlayer, Assembly-CSharp
+        m_MethodName: OnJump
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 5b2dd577-91f9-41de-958e-aa906db0f20c
+    m_ActionName: Player Action/Jump[/Keyboard/w]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 19149502-4e56-4fde-a76f-b7658902ccf1
+    m_ActionName: Player Action/UIControll[/Keyboard/downArrow,/Keyboard/upArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: defeb76e-259c-4c1b-afb2-c91e142a7095
+    m_ActionName: Player Action/UISellect[/Keyboard/space]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7111912916996499667}
+        m_TargetAssemblyTypeName: InputPlayer, Assembly-CSharp
+        m_MethodName: OnGrab
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 420fff61-9cde-4dfb-a263-af02ab7fe3c9
+    m_ActionName: Player Action/Grab[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 3022fc1f-d450-4194-a219-71aff382fdbf
+    m_ActionName: Player Action/GrabControll[/Mouse/position]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7111912916996499667}
+        m_TargetAssemblyTypeName: InputPlayer, Assembly-CSharp
+        m_MethodName: OnPush
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: a7b9536a-bf4c-46c4-8beb-047cc7cb4efe
+    m_ActionName: Player Action/Push[/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 8a1cd7d1-3261-422b-8fb4-7b392399c4ac
+    m_ActionName: Player Action/Menu[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7111912916996499667}
+        m_TargetAssemblyTypeName: InputPlayer, Assembly-CSharp
+        m_MethodName: OnMoveRight
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: b5511281-a936-42c9-b3c1-32103082505a
+    m_ActionName: Player Action/MoveRight[/Keyboard/d]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7111912916996499667}
+        m_TargetAssemblyTypeName: InputPlayer, Assembly-CSharp
+        m_MethodName: OnMoveLeft
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: e3fb9b2b-ff34-43cd-b368-e61a2b3fb6f7
+    m_ActionName: Player Action/MoveLeft[/Keyboard/a]
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: Keyboard, Mouse
+  m_DefaultActionMap: Player Action
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
+--- !u!114 &5523333914444213145
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5477906228450719680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e154110ee543fb478491d35570f1452, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  playanim: 0
 --- !u!1 &6539536214699927520
 GameObject:
   m_ObjectHideFlags: 0
@@ -1194,9 +1334,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6444dce363c08954c9a2875e07136153, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player1: {fileID: 0}
-  player2: {fileID: 2369459865458287543}
-  player: 2
+  Player: {fileID: 7111912916996499667}
   PChargeGage: {fileID: 4300179381880816022}
   PGage: {fileID: 9191910962314589406}
   PGrabRange: {fileID: 3216650249546364919}
@@ -1387,7 +1525,7 @@ GameObject:
   - component: {fileID: 7771050006684909613}
   - component: {fileID: 491579033653556796}
   - component: {fileID: 7351089743488824553}
-  - component: {fileID: 2118999950145397885}
+  - component: {fileID: 5491000787423246749}
   m_Layer: 0
   m_Name: PushGlove
   m_TagString: Player2Glove
@@ -1497,7 +1635,7 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 1, y: 1}
   m_Direction: 0
---- !u!114 &2118999950145397885
+--- !u!114 &5491000787423246749
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1506,10 +1644,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 8454353221532442318}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 52f549cbe9625b448b574e3b47b7122f, type: 3}
+  m_Script: {fileID: 11500000, guid: 65c4c6fe69fcd174bab1f20bd5119e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _Player1PushPower: 0
-  _Player2PushPower: 0
-  _canPushPlayer1: 1
-  _canPushPlayer2: 1
+  _PushPower: 0
+  _canPush: 1
