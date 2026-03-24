@@ -135,7 +135,7 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""2D Vector"",
+                    ""name"": ""Move"",
                     ""id"": ""eaab6c04-9abe-4825-979c-453dca0bea12"",
                     ""path"": ""2DVector"",
                     ""interactions"": """",
