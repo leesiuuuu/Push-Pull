@@ -1,5 +1,5 @@
 using UnityEngine;
-using Steamworks; // Facepunch.Steamworks 라이브러리를 설치하면 쓸 수 있어!
+using Steamworks;
 
 public class SteamManager : MonoBehaviour
 {
@@ -7,15 +7,12 @@ public class SteamManager : MonoBehaviour
     {
         try
         {
-            // 480(스페이스 워) 아이디로 스팀 초기화! (steam_appid.txt 역할도 알아서 해줌)
             SteamClient.Init(480);
 
-            // 성공하면 콘솔창에 내 스팀 닉네임이 뜰 거야!
             Debug.Log("스팀 연결 성공! 접속한 유저: " + SteamClient.Name);
         }
         catch (System.Exception e)
         {
-            // 스팀 클라이언트가 안 켜져있거나 오류가 나면 이쪽으로 빠짐
             Debug.LogError("스팀 연결 실패... 스팀이 켜져있나요? 원인: " + e.Message);
         }
     }

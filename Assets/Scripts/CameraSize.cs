@@ -10,10 +10,12 @@ public class CameraSize : MonoBehaviour
     public Transform object2;
     public float margin = 2f;
 
-    private void Awake()
+    private void FixedUpdate()
     {
-        object1 = GameObject.Find("Player1").GetComponent<Transform>();
-        object2 = GameObject.Find("Player2").GetComponent<Transform>();
+        if (object1 == null)     
+            object1 = GameObject.Find("Player1").GetComponent<Transform>();
+        if (object2 == null) 
+            object2 = GameObject.Find("Player2").GetComponent<Transform>();
     }
 
     void Update()
