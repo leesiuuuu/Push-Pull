@@ -6,7 +6,6 @@ using UnityEngine;
 
 namespace Mirror.FizzySteam
 {
-  [HelpURL("https://github.com/Chykary/FizzyFacepunch")]
   public class FizzyFacepunch : Transport
   {
     private const string STEAM_SCHEME = "steam";
