@@ -1,0 +1,65 @@
+verifyConditions:
+  - "@semantic-release/github"
+
+tagFormat: "FizzySteamworks-${version}"
+
+plugins:
+  - - '@semantic-release/commit-analyzer'
+    - preset: "angular"
+      releaseRules:
+      - type: "breaking"
+        release: "major"
+      - type: "release"
+        release: "major"
+      - type: "feature"
+        release: "minor"
+
+  - - '@semantic-release/release-notes-generator'
+    - preset: "conventionalcommits"
+      presetConfig:
+        types:
+        - type: "breaking"
+          section: "Breaking Changes"
+          hidden: false
+        - type: "release"
+          section: "Release"
+          hidden: false
+        - type: "feature"
+          section: "Features"
+          hidden: false
+
+  # Update the version in the package.json file
+  - - '@semantic-release/npm'
+    - npmPublish: false
+      pkgRoot: "com.mirror.steamworks.net"
+
+  # Write the new version in version.txt
+  - - '@semantic-release/exec'
+    - prepareCmd: "echo ${nextRelease.version} > com.mirror.steamworks.net/version.txt"
+
+  # Temporarily move package files to root folder to exclude from normal .unitypackage
+  - - '@semantic-release/exec'
+    - prepareCmd: "mv com.mirror.steamworks.net/package.json package.json 
+                && mv com.mirror.steamworks.net/package.json.meta package.json.meta"
+
+  # Create Unity Package
+  - - '@semantic-release/exec'
+    - prepareCmd: "unity-packer pack FizzySteamworks.unitypackage com.mirror.steamworks.net Assets/Mirror/Transports/FizzySteamworks" 
+
+  # Move package files back
+  - - '@semantic-release/exec'
+    - prepareCmd: "mv package.json com.mirror.steamworks.net/package.json  
+                && mv package.json.meta com.mirror.steamworks.net/package.json.meta "
+
+  # Commit changes where version was updated
+  - - '@semantic-release/git'
+    - assets:
+      - 'com.mirror.steamworks.net/version.txt'
+      - 'com.mirror.steamworks.net/package.json'
+
+  # Create a new release on GitHub
+  - - '@semantic-release/github'
+    - assets:
+      - path: "FizzySteamworks.unitypackage"
+        label: "FizzySteamworks Unity Package"
+        name: "FizzySteamworks-${nextRelease.version}.unitypackage"
