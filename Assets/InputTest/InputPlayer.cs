@@ -131,7 +131,7 @@ public class InputPlayer : NetworkBehaviour
     // 애니메이션
     // ───────────────────────────────────────────
 
-    private void PlayAnim(string animName)
+    public void PlayAnim(string animName)
     {
         Anim?.Play(animName);
         if (animName != lastAnimName)
