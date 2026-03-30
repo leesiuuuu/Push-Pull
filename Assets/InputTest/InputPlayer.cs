@@ -56,22 +56,18 @@ public class InputPlayer : NetworkBehaviour
 
     public override void OnStartLocalPlayer()
     {
+        base.OnStartLocalPlayer();
         if (PlayerInput != null) PlayerInput.enabled = true;
+        if (rb != null) rb.isKinematic = false;
     }
 
-    void Start()
+    public override void OnStartClient()
     {
+        base.OnStartClient();
         if (!isLocalPlayer)
         {
-            if (PlayerInput != null)
-            {
-                PlayerInput.enabled = false;
-            }
-
-            if (rb != null)
-            {
-                rb.isKinematic = true;
-            }
+            if (PlayerInput != null) PlayerInput.enabled = false;
+            if (rb != null) rb.isKinematic = true;
         }
     }
 
@@ -262,7 +258,6 @@ public class InputPlayer : NetworkBehaviour
 
     private void ApplyOscillationIfNeeded()
     {
-        // (기존 코드와 동일)
         if (GrabObject == null) return;
 
         if (Time.time - RPressTime >= 0.5f)
