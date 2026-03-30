@@ -280,6 +280,7 @@ MonoBehaviour:
   PushGlove: {fileID: 7977809641205117588}
   GrabGlove: {fileID: 3639984214711426537}
   Anim: {fileID: 1796438022125577718}
+  GloveAnim: {fileID: 9020937538045288243}
   PlayerSounds:
   - {fileID: 8300000, guid: 2c5292ba5cf254919a6b9e2b18e04f49, type: 3}
   - {fileID: 8300000, guid: 29bde6326b4c34ad8a12da475f79b50a, type: 3}
@@ -448,7 +449,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e154110ee543fb478491d35570f1452, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playanim: 0
 --- !u!114 &8315164331216916787
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -675,6 +675,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65c4c6fe69fcd174bab1f20bd5119e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   _PushPower: 0
   _canPush: 1
 --- !u!1 &1708240791715429641
@@ -1088,6 +1091,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d82f67861abd1243aba1e86bb848988, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   Target: {fileID: 0}
   addtargetPos: {x: 19, y: 0, z: 0}
   moveSpeed: 0

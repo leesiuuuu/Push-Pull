@@ -13,7 +13,11 @@ public class InputPlayer : NetworkBehaviour
     public Transform GrabObject;
     public PushGlove PushGlove;
     public Grab GrabGlove;
-    public Animator Anim;
+
+    [Header("Animators")]
+    public Animator Anim;       // 부모 - 이동 / 점프 / Idle / Die / Cleared
+    public Animator GloveAnim;  // 자식 - PushGlove 등 장갑 애니메이션
+
     public List<AudioClip> PlayerSounds = new List<AudioClip>();
 
     private Rigidbody2D rb;
@@ -47,13 +51,27 @@ public class InputPlayer : NetworkBehaviour
 
     public string ControlScheme = "Keyboard, Mouse";
 
+    // 애니메이션 동기화용
     private string lastAnimName = "";
+
+    // 플립 동기화용
+    [SyncVar(hook = nameof(OnFlipChanged))]
+    private bool syncFlip = false;
+
+    private static readonly HashSet<string> GloveAnimStates = new HashSet<string>
+    {
+        "PushGlove",
+    };
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+
         if (Anim == null && transform.parent != null)
             Anim = transform.parent.GetComponent<Animator>();
+
+        if (GloveAnim == null)
+            GloveAnim = GetComponentInChildren<Animator>();
     }
 
     public override void OnStartLocalPlayer()
@@ -81,7 +99,6 @@ public class InputPlayer : NetworkBehaviour
     void Update()
     {
         if (!isLocalPlayer) return;
-
         if (Time.timeScale == 0f) return;
         if (cantMove) return;
 
@@ -114,7 +131,6 @@ public class InputPlayer : NetworkBehaviour
     void FixedUpdate()
     {
         if (!isLocalPlayer) return;
-
         if (Time.timeScale == 0f) return;
         if (cantMove) return;
 
@@ -128,16 +144,39 @@ public class InputPlayer : NetworkBehaviour
     }
 
     // ───────────────────────────────────────────
-    // 애니메이션
+    // 애니메이션 동기화
     // ───────────────────────────────────────────
 
     public void PlayAnim(string animName)
     {
-        Anim?.Play(animName);
+        PlayAnimLocal(animName);
+
         if (animName != lastAnimName)
         {
             lastAnimName = animName;
             CmdPlayAnimation(animName);
+        }
+    }
+
+    private void PlayAnimLocal(string animName)
+    {
+        if (GloveAnimStates.Contains(animName))
+        {
+            if (GloveAnim == null)
+            {
+                Debug.LogError("[InputPlayer] GloveAnim이 null입니다! Inspector에서 장갑 오브젝트의 Animator를 연결해주세요.");
+                return;
+            }
+            GloveAnim.Play(animName);
+        }
+        else
+        {
+            if (Anim == null)
+            {
+                Debug.LogError("[InputPlayer] Anim이 null입니다!");
+                return;
+            }
+            Anim.Play(animName);
         }
     }
 
@@ -151,7 +190,30 @@ public class InputPlayer : NetworkBehaviour
     private void RpcPlayAnimation(string animName)
     {
         if (isLocalPlayer) return;
-        Anim?.Play(animName);
+        PlayAnimLocal(animName);
+    }
+
+    // ───────────────────────────────────────────
+    // 플립 동기화
+    // ───────────────────────────────────────────
+
+    private void OnFlipChanged(bool oldVal, bool newVal)
+    {
+        ApplyFlip(newVal);
+    }
+
+    // 실제 Scale 반전 적용
+    private void ApplyFlip(bool isFlipped)
+    {
+        Vector3 scale = transform.localScale;
+        scale.x = isFlipped ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
+        transform.localScale = scale;
+    }
+
+    [Command]
+    private void CmdSyncFlip(bool isFlipped)
+    {
+        syncFlip = isFlipped;
     }
 
     // ───────────────────────────────────────────
@@ -229,7 +291,6 @@ public class InputPlayer : NetworkBehaviour
         {
             GrabHeld = false;
             isGrabHolding = false;
-
             GrabGlove.DOGrab();
             SoundManager.Instance?.SFXPlay("PlayerPull_1", PlayerSounds[(int)global::PlayerSounds.Pull]);
             grabControlInput = Vector2.zero;
@@ -320,9 +381,8 @@ public class InputPlayer : NetworkBehaviour
     public void Flip()
     {
         flip = !flip;
-        Vector3 scale = transform.localScale;
-        scale.x *= -1f;
-        transform.localScale = scale;
+        ApplyFlip(flip);
+        if (isLocalPlayer) CmdSyncFlip(flip);
     }
 
     public bool ConsumePush(out float outCharge)
