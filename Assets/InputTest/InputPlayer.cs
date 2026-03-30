@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Mirror;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class InputPlayer : MonoBehaviour
+public class InputPlayer : NetworkBehaviour
 {
     [SerializeField] private ExChargeUi UI;
     [SerializeField] private SoundManager soundManager;
@@ -53,6 +54,17 @@ public class InputPlayer : MonoBehaviour
         if (Anim == null && transform.parent != null) Anim = transform.parent.GetComponent<Animator>();
     }
 
+    void Start()
+    {
+        if (!isLocalPlayer)
+        {
+            if (PlayerInput != null)
+                PlayerInput.enabled = false;
+
+            if (rb != null) rb.isKinematic = true;
+        }
+    }
+
     void OnEnable()
     {
         if (PlayerInput != null)
@@ -63,6 +75,8 @@ public class InputPlayer : MonoBehaviour
     {
         if (Time.timeScale == 0f) return;
         if (cantMove) return;
+
+        if (!isLocalPlayer) return;
 
         if (PushHeld) UI.OnPush();
         else UI.OffPush();
@@ -97,6 +111,8 @@ public class InputPlayer : MonoBehaviour
     {
         if (Time.timeScale == 0f) return;
         if (cantMove) return;
+
+        if (!isLocalPlayer) return;
 
         rb.velocity = new Vector2(moveInput.x * moveSpeed, rb.velocity.y);
 
@@ -213,15 +229,9 @@ public class InputPlayer : MonoBehaviour
                     float smoothLocalZ = Mathf.LerpAngle(currentLocalZ, desiredLocal, Time.deltaTime * aimSmooth);
                     GrabObject.localRotation = Quaternion.Euler(0f, 0f, smoothLocalZ);
                 }
-                else
-                {
-                    ApplyOscillationIfNeeded();
-                }
+                else ApplyOscillationIfNeeded();
             }
-            else
-            {
-                ApplyOscillationIfNeeded();
-            }
+            else ApplyOscillationIfNeeded();
         }
         else
         {
@@ -234,10 +244,7 @@ public class InputPlayer : MonoBehaviour
                 float smoothLocalZ = Mathf.LerpAngle(currentLocalZ, desiredLocal, Time.deltaTime * aimSmooth);
                 GrabObject.localRotation = Quaternion.Euler(0f, 0f, smoothLocalZ);
             }
-            else
-            {
-                ApplyOscillationIfNeeded();
-            }
+            else ApplyOscillationIfNeeded();
         }
     }
 
