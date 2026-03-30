@@ -24,7 +24,7 @@ public class Grab : NetworkBehaviour
 
     private void OnGlovePosChanged(Vector3 oldVal, Vector3 newVal)
     {
-        if (isLocalPlayer) return;
+        if (player.isLocalPlayer) return;
         transform.localPosition = newVal;
     }
 
@@ -53,7 +53,6 @@ public class Grab : NetworkBehaviour
             Target = null;
         }
 
-        // 대상을 잡은 상태: 글러브 위치로 끌어당김
         if (holdGrab && grabing && Target != null)
         {
             if (GrabPlayer)
@@ -68,7 +67,7 @@ public class Grab : NetworkBehaviour
             }
         }
 
-        if (isLocalPlayer && grabing)
+        if (player.isLocalPlayer && grabing)
         {
             CmdUpdateGlovePos(transform.localPosition);
         }
@@ -112,7 +111,7 @@ public class Grab : NetworkBehaviour
 
     public void DOGrab()
     {
-        if (!isLocalPlayer) return; // 로컬만 실행
+        if (!player.isLocalPlayer) return;
 
         if (!grabing)
         {
@@ -122,12 +121,12 @@ public class Grab : NetworkBehaviour
     }
 
     // ───────────────────────────────────────────
-    // 충돌 감지 → 서버에 알림
+    // 충돌 감지
     // ───────────────────────────────────────────
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!isLocalPlayer) return; // 로컬 플레이어만 충돌 감지
+        if (!player.isLocalPlayer) return;
 
         if (collision.gameObject.CompareTag("Player"))
         {
@@ -213,8 +212,7 @@ public class Grab : NetworkBehaviour
 
         grabing = false;
 
-        // 복귀 완료 시점에 최종 위치를 한 번 더 동기화
-        if (isLocalPlayer)
+        if (player.isLocalPlayer)
         {
             CmdUpdateGlovePos(StartPos);
         }

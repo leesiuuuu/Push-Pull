@@ -22,7 +22,7 @@ public class PushGlove : NetworkBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (!isLocalPlayer) return;
+        if (!player.isLocalPlayer) return;
         if (!_canPush) return;
         if (!player.Push) return;
 
@@ -30,7 +30,6 @@ public class PushGlove : NetworkBehaviour
         {
             if (collision.gameObject.TryGetComponent<Rigidbody2D>(out Rigidbody2D rigid))
             {
-                // 밀어낼 방향 계산
                 Vector2 dir = (gameObject.transform.position.x < collision.gameObject.transform.position.x)
                     ? Vector2.right
                     : Vector2.left;
@@ -52,6 +51,10 @@ public class PushGlove : NetworkBehaviour
         }
     }
 
+    // ───────────────────────────────────────────
+    // 서버에서 힘 적용 후 모든 클라이언트에 전달
+    // ───────────────────────────────────────────
+
     [Command]
     private void CmdApplyPush(uint targetNetId, Vector2 dir, float power)
     {
@@ -69,11 +72,19 @@ public class PushGlove : NetworkBehaviour
         }
     }
 
+    // ───────────────────────────────────────────
+    // 실제 힘 적용
+    // ───────────────────────────────────────────
+
     private void ApplyForce(Rigidbody2D rigid, Vector2 dir, float power)
     {
         rigid.AddForce(dir * power, ForceMode2D.Impulse);
         rigid.AddForce(Vector2.up * power / 2f, ForceMode2D.Impulse);
     }
+
+    // ───────────────────────────────────────────
+    // 쿨다운
+    // ───────────────────────────────────────────
 
     private IEnumerator PushCooldown()
     {
