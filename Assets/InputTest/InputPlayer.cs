@@ -47,18 +47,19 @@ public class InputPlayer : NetworkBehaviour
 
     public string ControlScheme = "Keyboard, Mouse";
 
+    private string lastAnimName = "";
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        if (PlayerInput == null) PlayerInput = GetComponent<PlayerInput>();
-        if (Anim == null && transform.parent != null) Anim = transform.parent.GetComponent<Animator>();
+        if (Anim == null && transform.parent != null)
+            Anim = transform.parent.GetComponent<Animator>();
     }
 
     public override void OnStartLocalPlayer()
     {
-        base.OnStartLocalPlayer();
+        PlayerInput = GetComponent<PlayerInput>();
         if (PlayerInput != null) PlayerInput.enabled = true;
-        if (rb != null) rb.isKinematic = false;
     }
 
     public override void OnStartClient()
@@ -66,7 +67,8 @@ public class InputPlayer : NetworkBehaviour
         base.OnStartClient();
         if (!isLocalPlayer)
         {
-            if (PlayerInput != null) PlayerInput.enabled = false;
+            var pi = GetComponent<PlayerInput>();
+            if (pi != null) pi.enabled = false;
             if (rb != null) rb.isKinematic = true;
         }
     }
@@ -104,8 +106,8 @@ public class InputPlayer : NetworkBehaviour
 
         if (jumpAble)
         {
-            if (Mathf.Abs(moveInput.x) > 0.01f) Anim?.Play("Move");
-            else Anim?.Play("Idle");
+            if (Mathf.Abs(moveInput.x) > 0.01f) PlayAnim("Move");
+            else PlayAnim("Idle");
         }
     }
 
@@ -124,6 +126,37 @@ public class InputPlayer : NetworkBehaviour
             else if (moveInput.x < 0f && !flip) Flip();
         }
     }
+
+    // ───────────────────────────────────────────
+    // 애니메이션
+    // ───────────────────────────────────────────
+
+    private void PlayAnim(string animName)
+    {
+        Anim?.Play(animName);
+        if (animName != lastAnimName)
+        {
+            lastAnimName = animName;
+            CmdPlayAnimation(animName);
+        }
+    }
+
+    [Command]
+    private void CmdPlayAnimation(string animName)
+    {
+        RpcPlayAnimation(animName);
+    }
+
+    [ClientRpc]
+    private void RpcPlayAnimation(string animName)
+    {
+        if (isLocalPlayer) return;
+        Anim?.Play(animName);
+    }
+
+    // ───────────────────────────────────────────
+    // 입력 처리
+    // ───────────────────────────────────────────
 
     public void OnMoveLeft(InputAction.CallbackContext context)
     {
@@ -157,7 +190,7 @@ public class InputPlayer : NetworkBehaviour
             rb.AddForce(Vector2.up * 15f, ForceMode2D.Impulse);
             jumpAble = false;
             SoundManager.Instance?.SFXPlay("PlayerJump_1", PlayerSounds[(int)global::PlayerSounds.Jump]);
-            Anim?.Play("Jump");
+            PlayAnim("Jump");
         }
     }
 
@@ -208,6 +241,10 @@ public class InputPlayer : NetworkBehaviour
         if (!isLocalPlayer) return;
         grabControlInput = context.ReadValue<Vector2>();
     }
+
+    // ───────────────────────────────────────────
+    // Grab 회전
+    // ───────────────────────────────────────────
 
     private void UpdateGrabRotation()
     {
@@ -276,6 +313,10 @@ public class InputPlayer : NetworkBehaviour
         }
     }
 
+    // ───────────────────────────────────────────
+    // 유틸
+    // ───────────────────────────────────────────
+
     public void Flip()
     {
         flip = !flip;
@@ -301,14 +342,14 @@ public class InputPlayer : NetworkBehaviour
     {
         if (!isLocalPlayer) return;
         SoundManager.Instance.SFXPlay("PlayerDied_1", PlayerSounds[(int)global::PlayerSounds.Die]);
-        Anim.Play("Die");
         cantMove = true;
+        PlayAnim("Die");
     }
 
     public void Cleared()
     {
         if (!isLocalPlayer) return;
         cantMove = true;
-        Anim.Play("Cleared");
+        PlayAnim("Cleared");
     }
 }
