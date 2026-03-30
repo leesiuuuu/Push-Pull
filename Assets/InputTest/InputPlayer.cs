@@ -54,29 +54,38 @@ public class InputPlayer : NetworkBehaviour
         if (Anim == null && transform.parent != null) Anim = transform.parent.GetComponent<Animator>();
     }
 
+    public override void OnStartLocalPlayer()
+    {
+        if (PlayerInput != null) PlayerInput.enabled = true;
+    }
+
     void Start()
     {
         if (!isLocalPlayer)
         {
             if (PlayerInput != null)
+            {
                 PlayerInput.enabled = false;
+            }
 
-            if (rb != null) rb.isKinematic = true;
+            if (rb != null)
+            {
+                rb.isKinematic = true;
+            }
         }
     }
 
     void OnEnable()
     {
-        if (PlayerInput != null)
-            ControlScheme = PlayerInput.currentControlScheme;
+        if (PlayerInput != null) ControlScheme = PlayerInput.currentControlScheme;
     }
 
     void Update()
     {
+        if (!isLocalPlayer) return;
+
         if (Time.timeScale == 0f) return;
         if (cantMove) return;
-
-        if (!isLocalPlayer) return;
 
         if (PushHeld) UI.OnPush();
         else UI.OffPush();
@@ -95,10 +104,7 @@ public class InputPlayer : NetworkBehaviour
 
         if (PushGlove != null) PushGlove.PushPower = PushCharge;
 
-        if (!GrabGlove.grabing)
-        {
-            UpdateGrabRotation();
-        }
+        if (!GrabGlove.grabing) UpdateGrabRotation();
 
         if (jumpAble)
         {
@@ -109,10 +115,10 @@ public class InputPlayer : NetworkBehaviour
 
     void FixedUpdate()
     {
+        if (!isLocalPlayer) return;
+
         if (Time.timeScale == 0f) return;
         if (cantMove) return;
-
-        if (!isLocalPlayer) return;
 
         rb.velocity = new Vector2(moveInput.x * moveSpeed, rb.velocity.y);
 
@@ -125,6 +131,7 @@ public class InputPlayer : NetworkBehaviour
 
     public void OnMoveLeft(InputAction.CallbackContext context)
     {
+        if (!isLocalPlayer) return;
         if (context.started || context.performed) moveLeft = true;
         else if (context.canceled) moveLeft = false;
         UpdateMoveInput();
@@ -132,6 +139,7 @@ public class InputPlayer : NetworkBehaviour
 
     public void OnMoveRight(InputAction.CallbackContext context)
     {
+        if (!isLocalPlayer) return;
         if (context.started || context.performed) moveRight = true;
         else if (context.canceled) moveRight = false;
         UpdateMoveInput();
@@ -147,6 +155,7 @@ public class InputPlayer : NetworkBehaviour
 
     public void OnJump(InputAction.CallbackContext context)
     {
+        if (!isLocalPlayer) return;
         if (context.performed && jumpAble)
         {
             rb.AddForce(Vector2.up * 15f, ForceMode2D.Impulse);
@@ -158,6 +167,7 @@ public class InputPlayer : NetworkBehaviour
 
     public void OnPush(InputAction.CallbackContext context)
     {
+        if (!isLocalPlayer) return;
         if (context.started)
         {
             PushHeld = true;
@@ -178,6 +188,7 @@ public class InputPlayer : NetworkBehaviour
 
     public void OnGrab(InputAction.CallbackContext context)
     {
+        if (!isLocalPlayer) return;
         if (context.started)
         {
             GrabHeld = true;
@@ -198,6 +209,7 @@ public class InputPlayer : NetworkBehaviour
 
     public void OnGrabControll(InputAction.CallbackContext context)
     {
+        if (!isLocalPlayer) return;
         grabControlInput = context.ReadValue<Vector2>();
     }
 
@@ -250,6 +262,7 @@ public class InputPlayer : NetworkBehaviour
 
     private void ApplyOscillationIfNeeded()
     {
+        // (기존 코드와 동일)
         if (GrabObject == null) return;
 
         if (Time.time - RPressTime >= 0.5f)
@@ -266,13 +279,6 @@ public class InputPlayer : NetworkBehaviour
             float smoothLocalZ = Mathf.LerpAngle(currentLocalZ, 0f, Time.deltaTime * aimSmooth);
             GrabObject.localRotation = Quaternion.Euler(0f, 0f, smoothLocalZ);
         }
-    }
-
-    private float ClampAngleToMax(float baseDeg, float targetDeg, float maxDeg)
-    {
-        float delta = Mathf.DeltaAngle(baseDeg, targetDeg);
-        float clamped = Mathf.Clamp(delta, -Mathf.Abs(maxDeg), Mathf.Abs(maxDeg));
-        return baseDeg + clamped;
     }
 
     public void Flip()
@@ -298,6 +304,7 @@ public class InputPlayer : NetworkBehaviour
 
     public void Die()
     {
+        if (!isLocalPlayer) return;
         SoundManager.Instance.SFXPlay("PlayerDied_1", PlayerSounds[(int)global::PlayerSounds.Die]);
         Anim.Play("Die");
         cantMove = true;
@@ -305,6 +312,7 @@ public class InputPlayer : NetworkBehaviour
 
     public void Cleared()
     {
+        if (!isLocalPlayer) return;
         cantMove = true;
         Anim.Play("Cleared");
     }
