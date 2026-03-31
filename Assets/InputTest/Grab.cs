@@ -8,6 +8,9 @@ public class Grab : MonoBehaviour
 
     public Transform Target;
 
+    private uint cachedTargetNetId = 0;
+    private bool hasNetworkTarget = false;
+
     public Vector3 addtargetPos = new Vector2(19f, 0);
     Vector3 StartPos = new Vector2(0.19f, -0.17f);
 
@@ -41,16 +44,15 @@ public class Grab : MonoBehaviour
         {
             holdGrab = false;
             targetingable = true;
-            Target = null;
+            ClearTarget();
         }
 
         if (holdGrab && grabing && Target != null)
         {
             if (GrabPlayer)
             {
-                var netId = Target.GetComponent<Mirror.NetworkIdentity>();
-                if (netId != null)
-                    networkPlayer?.SyncMoveTarget(netId.netId, gameObject.transform.position);
+                if (hasNetworkTarget)
+                    networkPlayer?.SyncMoveTarget(cachedTargetNetId, gameObject.transform.position);
             }
             else
             {
@@ -62,6 +64,30 @@ public class Grab : MonoBehaviour
         {
             networkPlayer?.SyncGlovePos(transform.localPosition);
         }
+    }
+
+    private void SetTarget(GameObject targetObj)
+    {
+        Target = targetObj.transform;
+
+        var netIdentity = targetObj.GetComponent<Mirror.NetworkIdentity>();
+        if (netIdentity != null)
+        {
+            cachedTargetNetId = netIdentity.netId;
+            hasNetworkTarget = true;
+        }
+        else
+        {
+            cachedTargetNetId = 0;
+            hasNetworkTarget = false;
+        }
+    }
+
+    private void ClearTarget()
+    {
+        Target = null;
+        cachedTargetNetId = 0;
+        hasNetworkTarget = false;
     }
 
     public void DOGrab()
@@ -86,7 +112,7 @@ public class Grab : MonoBehaviour
                 GrabPlayer = true;
                 if (grabing && targetingable)
                 {
-                    Target = collision.gameObject.GetComponent<Transform>();
+                    SetTarget(collision.gameObject);
                     targetingable = false;
                     StopAllCoroutines();
                     StartCoroutine(BackGrab());
@@ -98,7 +124,7 @@ public class Grab : MonoBehaviour
         {
             if (grabing && targetingable)
             {
-                Target = collision.gameObject.GetComponent<Transform>();
+                SetTarget(collision.gameObject);
                 targetingable = false;
                 StopAllCoroutines();
                 StartCoroutine(BackGrab());
@@ -158,6 +184,7 @@ public class Grab : MonoBehaviour
         }
 
         grabing = false;
+        ClearTarget();
 
         if (player.IsLocal)
             networkPlayer?.SyncGlovePos(StartPos);
