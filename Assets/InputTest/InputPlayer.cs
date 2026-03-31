@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 using Mirror;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class InputPlayer : NetworkBehaviour
+public class InputPlayer : MonoBehaviour
 {
     [SerializeField] private ExChargeUi UI;
     [SerializeField] private SoundManager soundManager;
@@ -15,10 +15,16 @@ public class InputPlayer : NetworkBehaviour
     public Grab GrabGlove;
 
     [Header("Animators")]
-    public Animator Anim;       // 부모 - 이동 / 점프 / Idle / Die / Cleared
-    public Animator GloveAnim;  // 자식 - PushGlove 등 장갑 애니메이션
+    public Animator GloveAnim; 
+
+    public static readonly HashSet<string> GloveAnimStates = new HashSet<string>
+    {
+        "PushGlove",
+    };
 
     public List<AudioClip> PlayerSounds = new List<AudioClip>();
+
+    private NetworkPlayer networkPlayer;
 
     private Rigidbody2D rb;
     Vector2 moveInput;
@@ -51,43 +57,30 @@ public class InputPlayer : NetworkBehaviour
 
     public string ControlScheme = "Keyboard, Mouse";
 
-    // 애니메이션 동기화용
+    public bool IsLocal => networkPlayer != null && networkPlayer.isLocalPlayer;
+
     private string lastAnimName = "";
 
-    // 플립 동기화용
-    [SyncVar(hook = nameof(OnFlipChanged))]
-    private bool syncFlip = false;
-
-    private static readonly HashSet<string> GloveAnimStates = new HashSet<string>
-    {
-        "PushGlove",
-    };
+    // ───────────────────────────────────────────
+    // 초기화
+    // ───────────────────────────────────────────
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-
-        if (Anim == null && transform.parent != null)
-            Anim = transform.parent.GetComponent<Animator>();
-
-        if (GloveAnim == null)
-            GloveAnim = GetComponentInChildren<Animator>();
+        networkPlayer = GetComponentInParent<NetworkPlayer>();
     }
 
-    public override void OnStartLocalPlayer()
+    void Start()
     {
-        PlayerInput = GetComponent<PlayerInput>();
-        if (PlayerInput != null) PlayerInput.enabled = true;
-    }
-
-    public override void OnStartClient()
-    {
-        base.OnStartClient();
-        if (!isLocalPlayer)
+        if (!IsLocal)
         {
-            var pi = GetComponent<PlayerInput>();
-            if (pi != null) pi.enabled = false;
+            if (PlayerInput != null) PlayerInput.enabled = false;
             if (rb != null) rb.isKinematic = true;
+        }
+        else
+        {
+            if (PlayerInput != null) PlayerInput.enabled = true;
         }
     }
 
@@ -96,9 +89,13 @@ public class InputPlayer : NetworkBehaviour
         if (PlayerInput != null) ControlScheme = PlayerInput.currentControlScheme;
     }
 
+    // ───────────────────────────────────────────
+    // Update / FixedUpdate
+    // ───────────────────────────────────────────
+
     void Update()
     {
-        if (!isLocalPlayer) return;
+        if (!IsLocal) return;
         if (Time.timeScale == 0f) return;
         if (cantMove) return;
 
@@ -130,7 +127,7 @@ public class InputPlayer : NetworkBehaviour
 
     void FixedUpdate()
     {
-        if (!isLocalPlayer) return;
+        if (!IsLocal) return;
         if (Time.timeScale == 0f) return;
         if (cantMove) return;
 
@@ -144,76 +141,18 @@ public class InputPlayer : NetworkBehaviour
     }
 
     // ───────────────────────────────────────────
-    // 애니메이션 동기화
+    // 애니메이션
     // ───────────────────────────────────────────
 
     public void PlayAnim(string animName)
     {
-        PlayAnimLocal(animName);
+        networkPlayer?.PlayAnimLocal(animName); 
 
         if (animName != lastAnimName)
         {
             lastAnimName = animName;
-            CmdPlayAnimation(animName);
+            networkPlayer?.SyncAnim(animName);
         }
-    }
-
-    private void PlayAnimLocal(string animName)
-    {
-        if (GloveAnimStates.Contains(animName))
-        {
-            if (GloveAnim == null)
-            {
-                Debug.LogError("[InputPlayer] GloveAnim이 null입니다! Inspector에서 장갑 오브젝트의 Animator를 연결해주세요.");
-                return;
-            }
-            GloveAnim.Play(animName);
-        }
-        else
-        {
-            if (Anim == null)
-            {
-                Debug.LogError("[InputPlayer] Anim이 null입니다!");
-                return;
-            }
-            Anim.Play(animName);
-        }
-    }
-
-    [Command]
-    private void CmdPlayAnimation(string animName)
-    {
-        RpcPlayAnimation(animName);
-    }
-
-    [ClientRpc]
-    private void RpcPlayAnimation(string animName)
-    {
-        if (isLocalPlayer) return;
-        PlayAnimLocal(animName);
-    }
-
-    // ───────────────────────────────────────────
-    // 플립 동기화
-    // ───────────────────────────────────────────
-
-    private void OnFlipChanged(bool oldVal, bool newVal)
-    {
-        ApplyFlip(newVal);
-    }
-
-    // 실제 Scale 반전 적용
-    private void ApplyFlip(bool isFlipped)
-    {
-        Vector3 scale = transform.localScale;
-        scale.x = isFlipped ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
-        transform.localScale = scale;
-    }
-
-    [Command]
-    private void CmdSyncFlip(bool isFlipped)
-    {
-        syncFlip = isFlipped;
     }
 
     // ───────────────────────────────────────────
@@ -222,7 +161,7 @@ public class InputPlayer : NetworkBehaviour
 
     public void OnMoveLeft(InputAction.CallbackContext context)
     {
-        if (!isLocalPlayer) return;
+        if (!IsLocal) return;
         if (context.started || context.performed) moveLeft = true;
         else if (context.canceled) moveLeft = false;
         UpdateMoveInput();
@@ -230,7 +169,7 @@ public class InputPlayer : NetworkBehaviour
 
     public void OnMoveRight(InputAction.CallbackContext context)
     {
-        if (!isLocalPlayer) return;
+        if (!IsLocal) return;
         if (context.started || context.performed) moveRight = true;
         else if (context.canceled) moveRight = false;
         UpdateMoveInput();
@@ -246,7 +185,7 @@ public class InputPlayer : NetworkBehaviour
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (!isLocalPlayer) return;
+        if (!IsLocal) return;
         if (context.performed && jumpAble)
         {
             rb.AddForce(Vector2.up * 15f, ForceMode2D.Impulse);
@@ -258,7 +197,7 @@ public class InputPlayer : NetworkBehaviour
 
     public void OnPush(InputAction.CallbackContext context)
     {
-        if (!isLocalPlayer) return;
+        if (!IsLocal) return;
         if (context.started)
         {
             PushHeld = true;
@@ -279,7 +218,7 @@ public class InputPlayer : NetworkBehaviour
 
     public void OnGrab(InputAction.CallbackContext context)
     {
-        if (!isLocalPlayer) return;
+        if (!IsLocal) return;
         if (context.started)
         {
             GrabHeld = true;
@@ -299,7 +238,7 @@ public class InputPlayer : NetworkBehaviour
 
     public void OnGrabControll(InputAction.CallbackContext context)
     {
-        if (!isLocalPlayer) return;
+        if (!IsLocal) return;
         grabControlInput = context.ReadValue<Vector2>();
     }
 
@@ -381,8 +320,7 @@ public class InputPlayer : NetworkBehaviour
     public void Flip()
     {
         flip = !flip;
-        ApplyFlip(flip);
-        if (isLocalPlayer) CmdSyncFlip(flip);
+        networkPlayer?.SyncFlip(flip);
     }
 
     public bool ConsumePush(out float outCharge)
@@ -400,7 +338,7 @@ public class InputPlayer : NetworkBehaviour
 
     public void Die()
     {
-        if (!isLocalPlayer) return;
+        if (!IsLocal) return;
         SoundManager.Instance.SFXPlay("PlayerDied_1", PlayerSounds[(int)global::PlayerSounds.Die]);
         cantMove = true;
         PlayAnim("Die");
@@ -408,7 +346,7 @@ public class InputPlayer : NetworkBehaviour
 
     public void Cleared()
     {
-        if (!isLocalPlayer) return;
+        if (!IsLocal) return;
         cantMove = true;
         PlayAnim("Cleared");
     }

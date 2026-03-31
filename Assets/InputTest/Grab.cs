@@ -1,11 +1,10 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Mirror;
 
-public class Grab : NetworkBehaviour
+public class Grab : MonoBehaviour
 {
     InputPlayer player;
+    NetworkPlayer networkPlayer;
 
     public Transform Target;
 
@@ -19,18 +18,10 @@ public class Grab : NetworkBehaviour
     public bool targetingable;
     public bool GrabPlayer = false;
 
-    [SyncVar(hook = nameof(OnGlovePosChanged))]
-    private Vector3 syncLocalPos;
-
-    private void OnGlovePosChanged(Vector3 oldVal, Vector3 newVal)
-    {
-        if (player.isLocalPlayer) return;
-        transform.localPosition = newVal;
-    }
-
     private void Awake()
     {
         player = GetComponentInParent<InputPlayer>();
+        networkPlayer = GetComponentInParent<NetworkPlayer>();
     }
 
     private void Start()
@@ -57,61 +48,25 @@ public class Grab : NetworkBehaviour
         {
             if (GrabPlayer)
             {
-                // 상대 플레이어를 잡은 경우 서버에 위치 동기화 요청
-                CmdMoveTarget(Target.GetComponent<NetworkIdentity>().netId, gameObject.transform.position);
+                var netId = Target.GetComponent<Mirror.NetworkIdentity>();
+                if (netId != null)
+                    networkPlayer?.SyncMoveTarget(netId.netId, gameObject.transform.position);
             }
             else
             {
-                // 일반 오브젝트는 직접 이동
                 Target.transform.position = gameObject.transform.position;
             }
         }
 
-        if (player.isLocalPlayer && grabing)
+        if (player.IsLocal && grabing)
         {
-            CmdUpdateGlovePos(transform.localPosition);
+            networkPlayer?.SyncGlovePos(transform.localPosition);
         }
     }
-
-    // ───────────────────────────────────────────
-    // 글러브 위치 동기화
-    // ───────────────────────────────────────────
-
-    [Command]
-    private void CmdUpdateGlovePos(Vector3 localPos)
-    {
-        syncLocalPos = localPos;
-    }
-
-    // ───────────────────────────────────────────
-    // 상대 플레이어 위치 강제 이동 (서버 권한)
-    // ───────────────────────────────────────────
-
-    [Command]
-    private void CmdMoveTarget(uint targetNetId, Vector3 targetPos)
-    {
-        if (NetworkServer.spawned.TryGetValue(targetNetId, out NetworkIdentity identity))
-        {
-            RpcMoveTarget(targetNetId, targetPos);
-        }
-    }
-
-    [ClientRpc]
-    private void RpcMoveTarget(uint targetNetId, Vector3 targetPos)
-    {
-        if (NetworkServer.spawned.TryGetValue(targetNetId, out NetworkIdentity identity))
-        {
-            identity.transform.position = targetPos;
-        }
-    }
-
-    // ───────────────────────────────────────────
-    // Grab 실행 (InputPlayer에서 호출)
-    // ───────────────────────────────────────────
 
     public void DOGrab()
     {
-        if (!player.isLocalPlayer) return;
+        if (!player.IsLocal) return;
 
         if (!grabing)
         {
@@ -120,13 +75,9 @@ public class Grab : NetworkBehaviour
         }
     }
 
-    // ───────────────────────────────────────────
-    // 충돌 감지
-    // ───────────────────────────────────────────
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!player.isLocalPlayer) return;
+        if (!player.IsLocal) return;
 
         if (collision.gameObject.CompareTag("Player"))
         {
@@ -161,10 +112,6 @@ public class Grab : NetworkBehaviour
             StartCoroutine(BackGrab());
         }
     }
-
-    // ───────────────────────────────────────────
-    // 코루틴
-    // ───────────────────────────────────────────
 
     public IEnumerator GoGrab()
     {
@@ -212,9 +159,7 @@ public class Grab : NetworkBehaviour
 
         grabing = false;
 
-        if (player.isLocalPlayer)
-        {
-            CmdUpdateGlovePos(StartPos);
-        }
+        if (player.IsLocal)
+            networkPlayer?.SyncGlovePos(StartPos);
     }
 }
