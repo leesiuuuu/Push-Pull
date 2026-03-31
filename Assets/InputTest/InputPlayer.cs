@@ -146,11 +146,10 @@ public class InputPlayer : MonoBehaviour
 
     public void PlayAnim(string animName)
     {
-        networkPlayer?.PlayAnimLocal(animName); 
-
         if (animName != lastAnimName)
         {
             lastAnimName = animName;
+            networkPlayer?.PlayAnimLocal(animName);
             networkPlayer?.SyncAnim(animName);
         }
     }
