@@ -26,7 +26,7 @@ public class ReNewGrab : MonoBehaviour
     }
 
     private void Start()
-    {
+    { 
         transform.position = StartPos;
         holdGrab = false;
         moveSpeed = 5;

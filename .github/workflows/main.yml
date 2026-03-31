@@ -1,0 +1,49 @@
+name: Automated Build ⭐
+
+on:
+  push:
+    branches: [ main, develop ]
+  workflow_dispatch: 
+
+jobs:
+  buildWindows:
+    name: 💻 Windows-64 Bit
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-
+
+      - name: Build project
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: StandaloneWindows64
+
+      # 빌드 파일 내부에 스팀 앱 ID 추가
+      - name: Create steam_appid.txt
+        shell: pwsh
+        run: |
+          # 480은 테스트용 ID입니다. 실제 ID가 있다면 수정하세요.
+          $buildPath = "build/StandaloneWindows64/steam_appid.txt"
+          echo "480" > $buildPath
+          Write-Host "Created steam_appid.txt at $buildPath"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Windows-Build-${{ github.run_number }}
+          path: build/StandaloneWindows64

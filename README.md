@@ -87,33 +87,29 @@
 
 ---
 
-스테이지는 총 3개이다.
+총 6개의 맵이 존재한다.
 
-각 스테이지는 3개의 기능 중 하나를 사용해 클리어하는 것을 목표로 한다.
-
-한 스테이지당 5개의 맵이 존재한다.
-
-1스테이지는 튜토리얼 맵으로 구성한다.
+> 튜토리얼 맵 하나, 기본 맵 5개
 
 - 1스테이지
 
-<img width="493" alt="33" src="https://github.com/user-attachments/assets/50d3dc59-df93-424d-9db6-deaf8cb42e80" />
-<img width="493" alt="33" src="https://github.com/user-attachments/assets/01d30832-ebf6-468c-a9ed-35e3f2f430ba" />
+![image](https://github.com/user-attachments/assets/50d3dc59-df93-424d-9db6-deaf8cb42e80)
 
 - 2스테이지
-<img width="493" alt="33" src="https://github.com/user-attachments/assets/d6b34995-be6b-41bc-9a56-e2e008310e3f" />
+
+![image](https://github.com/user-attachments/assets/d6b34995-be6b-41bc-9a56-e2e008310e3f)
 
 - 3스테이지
 
-<img width="638" alt="image4" src="https://github.com/user-attachments/assets/2d00d39f-7f2e-4dd2-94cd-2529d175b1f0" />
+![image](https://github.com/user-attachments/assets/2d00d39f-7f2e-4dd2-94cd-2529d175b1f0)
 
 - 4스테이지
 
-![image5](https://github.com/user-attachments/assets/36d8bd3e-da47-4110-a93f-62cdb3781393)
+![image](https://github.com/user-attachments/assets/36d8bd3e-da47-4110-a93f-62cdb3781393)
 
 
 - 5스테이지
-<img width="626" alt="image6" src="https://github.com/user-attachments/assets/979363a9-b5f4-4dba-a33d-316045d4d1b7" />
+![image](https://github.com/user-attachments/assets/979363a9-b5f4-4dba-a33d-316045d4d1b7)
 
 
 ## 2.게임 컨텐츠
@@ -122,15 +118,13 @@
 ## 2-1.메인 컨텐츠
 
 
-스테이지마다 바뀌는 능력을 활용하여, 다른 플레이어와의 협동을 통해 해당 스테이지의 함정등을 파회하며 모든 스테이지를 클리어한다
+각 맵마다 플레이어와 협동하여 열쇠를 얻고, 다음 스테이지로 이동하는 문을 찾는다.
 
 ## 2-2.서브 컨텐츠
 
-
-팀킬이 가능할만한 요소 추가
+팀원을 밀치거나 당길 수 있게 해 협동심을 더욱 끌어올린다.
 
 ## 2-3.엔딩
-
 
 모든 스테이지 클리어 이후 엔딩크래딧
 
@@ -143,17 +137,17 @@
 
 **밀치는 장갑**:**일정 게이지를 차징 이후 차징된 양에 따라 다른 플레이어를 밀친다**
 
-이런 느낌으로 초록색 위치일때 가장 큰 파워로 밀치게 된다
+아래 이미지처럼 왼쪽에서 오른쪽으로 막대바가 이동하게 된다.
+맨 오른쪽에 있을 때 최대 파워로 대상을 밀친다.
 
-![화면 녹화 중 2025-03-26 101937](https://github.com/user-attachments/assets/ec39ed69-9181-4a55-8c49-6117cab06afd)
+![bar](https://github.com/user-attachments/assets/05c5e354-65a4-4770-b333-df25be257a88)
 
 **끌어오는 장갑: 일정 키를 누를시 그랩 방향이 위아래로 움직인다**
 
-![화면 녹화 중 2025-03-26 102623](https://github.com/user-attachments/assets/aacf6cf1-3b03-4c79-8a5d-e61f84119ef4)
+아래 이미지처럼 키를 누를 시 화살표가 나타나며 위 아래로 움직이게 된다.
+키를 땔 시 화살표 방향으로 장갑이 날아간다.
 
-사거리가 점점 늘어나고 일정 길이에 도달하면 약 0.1초간 유지되다 취소된다
-
-0.1초 뒤 취소되는건 가장 먼 사거리일때 타이밍을 잡는 재미요소를 위함
+![rotation](https://github.com/user-attachments/assets/bc5f29c6-915c-483f-939e-aef52f1e2f5e)
 
 # 스테이지 기믹
 
@@ -187,10 +181,14 @@ ex)
 
 ### 사용 리소스 출처
 
-https://assetstore.unity.com/packages/audio/music/8bit-music-album-051321-196147?srsltid=AfmBOorUaI9I9A3xIVTbJrYxmE4YKiXcARvwuUVgmaYW7bfbbCA8MfEC
+[음악 에셋 1](https://assetstore.unity.com/packages/audio/music/8bit-music-album-051321-196147?srsltid=AfmBOorUaI9I9A3xIVTbJrYxmE4YKiXcARvwuUVgmaYW7bfbbCA8MfEC)
 
-https://assetstore.unity.com/packages/audio/music/8bit-music-062022-225623
+[음악 에셋 2](https://assetstore.unity.com/packages/audio/music/8bit-music-062022-225623)
 
-https://assetstore.unity.com/packages/audio/sound-fx/free-casual-game-sfx-pack-54116?srsltid=AfmBOopJ7WwyLVu7pqzrAfKBiJYI2TC9F8KAzT2ko1LZ553kCIdCbzqX
+[효과음 에셋 1](https://assetstore.unity.com/packages/audio/sound-fx/free-casual-game-sfx-pack-54116?srsltid=AfmBOopJ7WwyLVu7pqzrAfKBiJYI2TC9F8KAzT2ko1LZ553kCIdCbzqX)
 
-https://www.kenney.nl/assets/ui-audio
+[효과음 에셋 2](https://www.kenney.nl/assets/ui-audio)
+
+[그래픽 에셋](https://kenney.nl/assets/1-bit-platformer-pack)
+
+[버튼 그래피 에셋](https://kenney.nl/assets/input-prompts-pixel-16)

@@ -1,0 +1,24 @@
+name: Acquire Activation File
+on:
+  workflow_dispatch: # 수동 실행
+
+jobs:
+  activation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 최신 방식: unity-activate 액션만 사용합니다.
+      - name: Request activation file
+        uses: game-ci/unity-activate@v2
+        id: activation
+        with:
+          unityVersion: 2022.3.21f1 # 사용하시는 유니티 버전을 명시하세요.
+
+      - name: Upload .alf artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: activation-file
+          # 위 스텝에서 생성된 .alf 파일 경로를 참조합니다.
+          path: ${{ steps.activation.outputs.filePath }}
