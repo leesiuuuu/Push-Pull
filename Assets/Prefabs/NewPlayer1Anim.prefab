@@ -550,6 +550,7 @@ GameObject:
   - component: {fileID: 5005522851885338144}
   - component: {fileID: 8402557815864820069}
   - component: {fileID: 7977809641205117588}
+  - component: {fileID: 124649551092450867}
   m_Layer: 0
   m_Name: PushGlove
   m_TagString: Player1Glove
@@ -673,6 +674,40 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _PushPower: 0
   _canPush: 1
+--- !u!114 &124649551092450867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1538751184656066701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 1
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 1617330331224720626}
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 1
+  onlySyncOnChange: 1
+  compressRotation: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  coordinateSpace: 0
+  timelineOffset: 1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  onlySyncOnChangeCorrectionMultiplier: 2
+  useFixedUpdate: 0
+  rotationSensitivity: 0.01
+  positionPrecision: 0.01
+  scalePrecision: 0.01
 --- !u!1 &1708240791715429641
 GameObject:
   m_ObjectHideFlags: 0
@@ -846,6 +881,7 @@ GameObject:
   - component: {fileID: 1826054566949650107}
   - component: {fileID: 1092455675999686193}
   - component: {fileID: 3639984214711426537}
+  - component: {fileID: 5997472166650373274}
   m_Layer: 0
   m_Name: GrabGlove
   m_TagString: Player1Grab
@@ -1091,6 +1127,40 @@ MonoBehaviour:
   grabing: 0
   targetingable: 0
   GrabPlayer: 0
+--- !u!114 &5997472166650373274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3592784288518633808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 1
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 8328640744778051042}
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 1
+  onlySyncOnChange: 1
+  compressRotation: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  coordinateSpace: 0
+  timelineOffset: 1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  onlySyncOnChangeCorrectionMultiplier: 2
+  useFixedUpdate: 0
+  rotationSensitivity: 0.01
+  positionPrecision: 0.01
+  scalePrecision: 0.01
 --- !u!1 &4776101192457551186
 GameObject:
   m_ObjectHideFlags: 0

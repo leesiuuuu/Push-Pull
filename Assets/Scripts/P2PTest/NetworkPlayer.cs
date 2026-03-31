@@ -4,13 +4,12 @@ using Mirror;
 
 public class NetworkPlayer : NetworkBehaviour
 {
-    // 자식 참조
     private InputPlayer inputPlayer;
     private Grab grab;
     private Rigidbody2D childRb;
     private UnityEngine.InputSystem.PlayerInput childPlayerInput;
 
-=    private Animator anim;
+    private Animator anim;
 
     // ── SyncVar ──────────────────────────────────
 
@@ -41,7 +40,7 @@ public class NetworkPlayer : NetworkBehaviour
 
     public override void OnStartLocalPlayer()
     {
-=        if (childPlayerInput != null) childPlayerInput.enabled = true;
+        if (childPlayerInput != null) childPlayerInput.enabled = true;
         if (childRb != null) childRb.isKinematic = false;
         Debug.Log("[NetworkPlayer] 로컬 플레이어 초기화 완료");
     }
