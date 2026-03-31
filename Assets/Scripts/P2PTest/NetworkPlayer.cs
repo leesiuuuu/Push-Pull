@@ -8,10 +8,7 @@ public class NetworkPlayer : NetworkBehaviour
     private Grab grab;
     private Rigidbody2D childRb;
     private UnityEngine.InputSystem.PlayerInput childPlayerInput;
-
     private Animator anim;
-
-    // ── SyncVar ──────────────────────────────────
 
     [SyncVar(hook = nameof(OnFlipChanged))]
     private bool syncFlip = false;
@@ -19,7 +16,8 @@ public class NetworkPlayer : NetworkBehaviour
     [SyncVar(hook = nameof(OnGlovePosChanged))]
     private Vector3 syncGloveLocalPos;
 
-    // ─────────────────────────────────────────────
+    [SyncVar(hook = nameof(OnAnimChanged))]
+    private string syncAnimName = "";
 
     private void Awake()
     {
@@ -34,26 +32,19 @@ public class NetworkPlayer : NetworkBehaviour
         }
     }
 
-    // ───────────────────────────────────────────
-    // Mirror 콜백 - 로컬/원격 초기화
-    // ───────────────────────────────────────────
-
     public override void OnStartLocalPlayer()
     {
         if (childPlayerInput != null) childPlayerInput.enabled = true;
         if (childRb != null) childRb.isKinematic = false;
-        Debug.Log("[NetworkPlayer] 로컬 플레이어 초기화 완료");
     }
 
     public override void OnStartClient()
     {
         base.OnStartClient();
-
         if (!isLocalPlayer)
         {
             if (childPlayerInput != null) childPlayerInput.enabled = false;
             if (childRb != null) childRb.isKinematic = true;
-            Debug.Log("[NetworkPlayer] 원격 플레이어 초기화 완료");
         }
     }
 
@@ -91,10 +82,15 @@ public class NetworkPlayer : NetworkBehaviour
     // 애니메이션 동기화
     // ───────────────────────────────────────────
 
+    private void OnAnimChanged(string oldVal, string newVal)
+    {
+        if (isLocalPlayer) return;
+        PlayAnimLocal(newVal);
+    }
+
     public void PlayAnimLocal(string animName)
     {
         if (inputPlayer == null) return;
-
         if (InputPlayer.GloveAnimStates.Contains(animName))
             inputPlayer.GloveAnim?.Play(animName);
         else
@@ -109,6 +105,7 @@ public class NetworkPlayer : NetworkBehaviour
     [Command]
     private void CmdPlayAnimation(string animName)
     {
+        syncAnimName = animName;
         RpcPlayAnimation(animName);
     }
 
@@ -159,7 +156,7 @@ public class NetworkPlayer : NetworkBehaviour
     [ClientRpc]
     private void RpcMoveTarget(uint targetNetId, Vector3 targetPos)
     {
-        if (NetworkServer.spawned.TryGetValue(targetNetId, out NetworkIdentity identity))
+        if (NetworkClient.spawned.TryGetValue(targetNetId, out NetworkIdentity identity))
             identity.transform.position = targetPos;
     }
 
@@ -181,7 +178,7 @@ public class NetworkPlayer : NetworkBehaviour
     [ClientRpc]
     private void RpcApplyPush(uint targetNetId, Vector2 dir, float power)
     {
-        if (!NetworkServer.spawned.TryGetValue(targetNetId, out NetworkIdentity identity)) return;
+        if (!NetworkClient.spawned.TryGetValue(targetNetId, out NetworkIdentity identity)) return;
         if (identity.TryGetComponent<Rigidbody2D>(out Rigidbody2D rigid))
         {
             rigid.AddForce(dir * power, ForceMode2D.Impulse);
