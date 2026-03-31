@@ -1,17 +1,23 @@
 name: Acquire Activation File
 on:
-  workflow_dispatch:  # GitHub Actions 탭에서 수동 실행
- 
+  workflow_dispatch: # 수동 실행
+
 jobs:
   activation:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 1. .alf 파일 생성 (이 액션이 요청 파일을 만들어줍니다)
       - name: Request activation file
-        uses: game-ci/unity-activate@v2
-        id: activation
- 
+        uses: game-ci/unity-request-activation-file@v2
+        id: get_alf
+
+      # 2. 생성된 .alf 파일을 Artifact로 업로드
       - name: Upload .alf artifact
         uses: actions/upload-artifact@v4
         with:
-          name: activation-file
-          path: ${{ steps.activation.outputs.filePath }}
+          name: Unity-Activation-File
+          # 중요: 위 스텝의 ID를 참조하여 경로를 지정합니다.
+          path: ${{ steps.get_alf.outputs.filePath }}
