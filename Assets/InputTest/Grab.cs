@@ -1,12 +1,15 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Grab : MonoBehaviour
 {
     InputPlayer player;
+    NetworkPlayer networkPlayer;
 
     public Transform Target;
+
+    private uint cachedTargetNetId = 0;
+    private bool hasNetworkTarget = false;
 
     public Vector3 addtargetPos = new Vector2(19f, 0);
     Vector3 StartPos = new Vector2(0.19f, -0.17f);
@@ -16,13 +19,12 @@ public class Grab : MonoBehaviour
     public bool holdGrab;
     public bool grabing;
     public bool targetingable;
-
     public bool GrabPlayer = false;
-
 
     private void Awake()
     {
         player = GetComponentInParent<InputPlayer>();
+        networkPlayer = GetComponentInParent<NetworkPlayer>();
     }
 
     private void Start()
@@ -36,28 +38,63 @@ public class Grab : MonoBehaviour
 
     private void Update()
     {
-        if (Time.timeScale == 0)
-            return;
+        if (Time.timeScale == 0) return;
 
         if (Vector3.Distance(gameObject.transform.position, player.transform.position) <= 1)
         {
             holdGrab = false;
             targetingable = true;
-            Target = null;
+            ClearTarget();
         }
 
-        if (holdGrab)
+        if (holdGrab && grabing && Target != null)
         {
-            if (grabing)
+            if (GrabPlayer)
+            {
+                if (hasNetworkTarget)
+                    networkPlayer?.SyncMoveTarget(cachedTargetNetId, gameObject.transform.position);
+            }
+            else
             {
                 Target.transform.position = gameObject.transform.position;
             }
         }
+
+        if (player.IsLocal && grabing)
+        {
+            networkPlayer?.SyncGlovePos(transform.localPosition);
+        }
+    }
+
+    private void SetTarget(GameObject targetObj)
+    {
+        Target = targetObj.transform;
+
+        var netIdentity = targetObj.GetComponent<Mirror.NetworkIdentity>();
+        if (netIdentity != null)
+        {
+            cachedTargetNetId = netIdentity.netId;
+            hasNetworkTarget = true;
+        }
+        else
+        {
+            cachedTargetNetId = 0;
+            hasNetworkTarget = false;
+        }
+    }
+
+    private void ClearTarget()
+    {
+        Target = null;
+        cachedTargetNetId = 0;
+        hasNetworkTarget = false;
     }
 
     public void DOGrab()
     {
-        if (grabing == false)
+        if (!player.IsLocal) return;
+
+        if (!grabing)
         {
             StartCoroutine(GoGrab());
             grabing = true;
@@ -66,36 +103,31 @@ public class Grab : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (!player.IsLocal) return;
 
         if (collision.gameObject.CompareTag("Player"))
         {
             if (!collision.gameObject.GetComponentInChildren<Grab>().GrabPlayer)
             {
                 GrabPlayer = true;
-                if (grabing)
+                if (grabing && targetingable)
                 {
-                    if (targetingable)
-                    {
-                        Target = collision.gameObject.GetComponent<Transform>();
-                        targetingable = false;
-                        StopAllCoroutines();
-                        StartCoroutine(BackGrab());
-                    }
+                    SetTarget(collision.gameObject);
+                    targetingable = false;
+                    StopAllCoroutines();
+                    StartCoroutine(BackGrab());
                     holdGrab = true;
                 }
             }
         }
         else if (collision.gameObject.CompareTag("interactive"))
         {
-            if (grabing)
+            if (grabing && targetingable)
             {
-                if (targetingable)
-                {
-                    Target = collision.gameObject.GetComponent<Transform>();
-                    targetingable = false;
-                    StopAllCoroutines();
-                    StartCoroutine(BackGrab());
-                }
+                SetTarget(collision.gameObject);
+                targetingable = false;
+                StopAllCoroutines();
+                StartCoroutine(BackGrab());
                 holdGrab = true;
             }
         }
@@ -109,8 +141,6 @@ public class Grab : MonoBehaviour
 
     public IEnumerator GoGrab()
     {
-        //SoundManager.Instance.SFXPlay("PlayerPull_1", player.player1Sounds[(int)PlayerSounds.Pull]);
-
         Vector3 startPos = transform.localPosition;
         Vector3 targetPos = startPos + addtargetPos;
         float duration = Vector3.Distance(startPos, targetPos) / moveSpeed;
@@ -123,9 +153,8 @@ public class Grab : MonoBehaviour
             transform.localPosition = Vector3.Lerp(startPos, targetPos, t * moveSpeed);
 
             if (Vector3.Distance(transform.localPosition, targetPos) < threshold)
-            {
                 break;
-            }
+
             yield return null;
         }
 
@@ -150,8 +179,14 @@ public class Grab : MonoBehaviour
                 GrabPlayer = false;
                 break;
             }
+
             yield return null;
         }
+
         grabing = false;
+        ClearTarget();
+
+        if (player.IsLocal)
+            networkPlayer?.SyncGlovePos(StartPos);
     }
 }

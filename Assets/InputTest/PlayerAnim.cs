@@ -1,13 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerAnim : MonoBehaviour
 {
     Animator anim;
-    private InputPlayer player;
-
-    [SerializeField] private bool playanim;
+    InputPlayer player;
+    bool playanim;
 
     private void Awake()
     {
@@ -21,7 +18,7 @@ public class PlayerAnim : MonoBehaviour
 
         if (player.Push && !playanim)
         {
-            anim.Play("PushGlove");
+            player.PlayAnim("PushGlove");
             playanim = true;
         }
 

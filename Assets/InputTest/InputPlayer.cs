@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Mirror;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class InputPlayer : MonoBehaviour
@@ -12,8 +13,18 @@ public class InputPlayer : MonoBehaviour
     public Transform GrabObject;
     public PushGlove PushGlove;
     public Grab GrabGlove;
-    public Animator Anim;
+
+    [Header("Animators")]
+    public Animator GloveAnim; 
+
+    public static readonly HashSet<string> GloveAnimStates = new HashSet<string>
+    {
+        "PushGlove",
+    };
+
     public List<AudioClip> PlayerSounds = new List<AudioClip>();
+
+    private NetworkPlayer networkPlayer;
 
     private Rigidbody2D rb;
     Vector2 moveInput;
@@ -46,21 +57,45 @@ public class InputPlayer : MonoBehaviour
 
     public string ControlScheme = "Keyboard, Mouse";
 
+    public bool IsLocal => networkPlayer != null && networkPlayer.isLocalPlayer;
+
+    private string lastAnimName = "";
+
+    // ───────────────────────────────────────────
+    // 초기화
+    // ───────────────────────────────────────────
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        if (PlayerInput == null) PlayerInput = GetComponent<PlayerInput>();
-        if (Anim == null && transform.parent != null) Anim = transform.parent.GetComponent<Animator>();
+        networkPlayer = GetComponentInParent<NetworkPlayer>();
+    }
+
+    void Start()
+    {
+        if (!IsLocal)
+        {
+            if (PlayerInput != null) PlayerInput.enabled = false;
+            if (rb != null) rb.isKinematic = true;
+        }
+        else
+        {
+            if (PlayerInput != null) PlayerInput.enabled = true;
+        }
     }
 
     void OnEnable()
     {
-        if (PlayerInput != null)
-            ControlScheme = PlayerInput.currentControlScheme;
+        if (PlayerInput != null) ControlScheme = PlayerInput.currentControlScheme;
     }
+
+    // ───────────────────────────────────────────
+    // Update / FixedUpdate
+    // ───────────────────────────────────────────
 
     void Update()
     {
+        if (!IsLocal) return;
         if (Time.timeScale == 0f) return;
         if (cantMove) return;
 
@@ -81,20 +116,18 @@ public class InputPlayer : MonoBehaviour
 
         if (PushGlove != null) PushGlove.PushPower = PushCharge;
 
-        if (!GrabGlove.grabing)
-        {
-            UpdateGrabRotation();
-        }
+        if (!GrabGlove.grabing) UpdateGrabRotation();
 
         if (jumpAble)
         {
-            if (Mathf.Abs(moveInput.x) > 0.01f) Anim?.Play("Move");
-            else Anim?.Play("Idle");
+            if (Mathf.Abs(moveInput.x) > 0.01f) PlayAnim("Move");
+            else PlayAnim("Idle");
         }
     }
 
     void FixedUpdate()
     {
+        if (!IsLocal) return;
         if (Time.timeScale == 0f) return;
         if (cantMove) return;
 
@@ -107,8 +140,27 @@ public class InputPlayer : MonoBehaviour
         }
     }
 
+    // ───────────────────────────────────────────
+    // 애니메이션
+    // ───────────────────────────────────────────
+
+    public void PlayAnim(string animName)
+    {
+        if (animName != lastAnimName)
+        {
+            lastAnimName = animName;
+            networkPlayer?.PlayAnimLocal(animName);
+            networkPlayer?.SyncAnim(animName);
+        }
+    }
+
+    // ───────────────────────────────────────────
+    // 입력 처리
+    // ───────────────────────────────────────────
+
     public void OnMoveLeft(InputAction.CallbackContext context)
     {
+        if (!IsLocal) return;
         if (context.started || context.performed) moveLeft = true;
         else if (context.canceled) moveLeft = false;
         UpdateMoveInput();
@@ -116,6 +168,7 @@ public class InputPlayer : MonoBehaviour
 
     public void OnMoveRight(InputAction.CallbackContext context)
     {
+        if (!IsLocal) return;
         if (context.started || context.performed) moveRight = true;
         else if (context.canceled) moveRight = false;
         UpdateMoveInput();
@@ -131,17 +184,19 @@ public class InputPlayer : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext context)
     {
+        if (!IsLocal) return;
         if (context.performed && jumpAble)
         {
             rb.AddForce(Vector2.up * 15f, ForceMode2D.Impulse);
             jumpAble = false;
             SoundManager.Instance?.SFXPlay("PlayerJump_1", PlayerSounds[(int)global::PlayerSounds.Jump]);
-            Anim?.Play("Jump");
+            PlayAnim("Jump");
         }
     }
 
     public void OnPush(InputAction.CallbackContext context)
     {
+        if (!IsLocal) return;
         if (context.started)
         {
             PushHeld = true;
@@ -162,6 +217,7 @@ public class InputPlayer : MonoBehaviour
 
     public void OnGrab(InputAction.CallbackContext context)
     {
+        if (!IsLocal) return;
         if (context.started)
         {
             GrabHeld = true;
@@ -173,7 +229,6 @@ public class InputPlayer : MonoBehaviour
         {
             GrabHeld = false;
             isGrabHolding = false;
-
             GrabGlove.DOGrab();
             SoundManager.Instance?.SFXPlay("PlayerPull_1", PlayerSounds[(int)global::PlayerSounds.Pull]);
             grabControlInput = Vector2.zero;
@@ -182,8 +237,13 @@ public class InputPlayer : MonoBehaviour
 
     public void OnGrabControll(InputAction.CallbackContext context)
     {
+        if (!IsLocal) return;
         grabControlInput = context.ReadValue<Vector2>();
     }
+
+    // ───────────────────────────────────────────
+    // Grab 회전
+    // ───────────────────────────────────────────
 
     private void UpdateGrabRotation()
     {
@@ -213,15 +273,9 @@ public class InputPlayer : MonoBehaviour
                     float smoothLocalZ = Mathf.LerpAngle(currentLocalZ, desiredLocal, Time.deltaTime * aimSmooth);
                     GrabObject.localRotation = Quaternion.Euler(0f, 0f, smoothLocalZ);
                 }
-                else
-                {
-                    ApplyOscillationIfNeeded();
-                }
+                else ApplyOscillationIfNeeded();
             }
-            else
-            {
-                ApplyOscillationIfNeeded();
-            }
+            else ApplyOscillationIfNeeded();
         }
         else
         {
@@ -234,10 +288,7 @@ public class InputPlayer : MonoBehaviour
                 float smoothLocalZ = Mathf.LerpAngle(currentLocalZ, desiredLocal, Time.deltaTime * aimSmooth);
                 GrabObject.localRotation = Quaternion.Euler(0f, 0f, smoothLocalZ);
             }
-            else
-            {
-                ApplyOscillationIfNeeded();
-            }
+            else ApplyOscillationIfNeeded();
         }
     }
 
@@ -261,19 +312,14 @@ public class InputPlayer : MonoBehaviour
         }
     }
 
-    private float ClampAngleToMax(float baseDeg, float targetDeg, float maxDeg)
-    {
-        float delta = Mathf.DeltaAngle(baseDeg, targetDeg);
-        float clamped = Mathf.Clamp(delta, -Mathf.Abs(maxDeg), Mathf.Abs(maxDeg));
-        return baseDeg + clamped;
-    }
+    // ───────────────────────────────────────────
+    // 유틸
+    // ───────────────────────────────────────────
 
     public void Flip()
     {
         flip = !flip;
-        Vector3 scale = transform.localScale;
-        scale.x *= -1f;
-        transform.localScale = scale;
+        networkPlayer?.SyncFlip(flip);
     }
 
     public bool ConsumePush(out float outCharge)
@@ -291,14 +337,16 @@ public class InputPlayer : MonoBehaviour
 
     public void Die()
     {
+        if (!IsLocal) return;
         SoundManager.Instance.SFXPlay("PlayerDied_1", PlayerSounds[(int)global::PlayerSounds.Die]);
-        Anim.Play("Die");
         cantMove = true;
+        PlayAnim("Die");
     }
 
     public void Cleared()
     {
+        if (!IsLocal) return;
         cantMove = true;
-        Anim.Play("Cleared");
+        PlayAnim("Cleared");
     }
 }
