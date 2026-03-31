@@ -15,8 +15,9 @@ public class InputPlayer : MonoBehaviour
     public Grab GrabGlove;
 
     [Header("Animators")]
-    public Animator GloveAnim; 
+    public Animator GloveAnim;
 
+    // NetworkPlayer.PlayAnimLocal 에서 접근하므로 public static
     public static readonly HashSet<string> GloveAnimStates = new HashSet<string>
     {
         "PushGlove",
@@ -24,10 +25,11 @@ public class InputPlayer : MonoBehaviour
 
     public List<AudioClip> PlayerSounds = new List<AudioClip>();
 
+    // 최상위 부모의 NetworkPlayer 참조
     private NetworkPlayer networkPlayer;
 
     private Rigidbody2D rb;
-    Vector2 moveInput;
+    private Vector2 moveInput;
     private bool moveLeft = false;
     private bool moveRight = false;
     public float moveSpeed = 4f;
@@ -61,37 +63,20 @@ public class InputPlayer : MonoBehaviour
 
     private string lastAnimName = "";
 
-    // ───────────────────────────────────────────
-    // 초기화
-    // ───────────────────────────────────────────
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         networkPlayer = GetComponentInParent<NetworkPlayer>();
-    }
 
-    void Start()
-    {
-        if (!IsLocal)
-        {
-            if (PlayerInput != null) PlayerInput.enabled = false;
-            if (rb != null) rb.isKinematic = true;
-        }
-        else
-        {
-            if (PlayerInput != null) PlayerInput.enabled = true;
-        }
+        if (GloveAnim == null)
+            GloveAnim = GetComponentInChildren<Animator>();
     }
 
     void OnEnable()
     {
         if (PlayerInput != null) ControlScheme = PlayerInput.currentControlScheme;
     }
-
-    // ───────────────────────────────────────────
-    // Update / FixedUpdate
-    // ───────────────────────────────────────────
 
     void Update()
     {
@@ -116,7 +101,7 @@ public class InputPlayer : MonoBehaviour
 
         if (PushGlove != null) PushGlove.PushPower = PushCharge;
 
-        if (!GrabGlove.grabing) UpdateGrabRotation();
+        if (GrabGlove != null && !GrabGlove.grabing) UpdateGrabRotation();
 
         if (jumpAble)
         {
@@ -133,7 +118,7 @@ public class InputPlayer : MonoBehaviour
 
         rb.velocity = new Vector2(moveInput.x * moveSpeed, rb.velocity.y);
 
-        if (Mathf.Abs(moveInput.x) > flipThreshold && !GrabGlove.grabing)
+        if (Mathf.Abs(moveInput.x) > flipThreshold && GrabGlove != null && !GrabGlove.grabing)
         {
             if (moveInput.x > 0f && flip) Flip();
             else if (moveInput.x < 0f && !flip) Flip();
@@ -146,10 +131,11 @@ public class InputPlayer : MonoBehaviour
 
     public void PlayAnim(string animName)
     {
+        networkPlayer?.PlayAnimLocal(animName);
+
         if (animName != lastAnimName)
         {
             lastAnimName = animName;
-            networkPlayer?.PlayAnimLocal(animName);
             networkPlayer?.SyncAnim(animName);
         }
     }
@@ -229,7 +215,7 @@ public class InputPlayer : MonoBehaviour
         {
             GrabHeld = false;
             isGrabHolding = false;
-            GrabGlove.DOGrab();
+            GrabGlove?.DOGrab();
             SoundManager.Instance?.SFXPlay("PlayerPull_1", PlayerSounds[(int)global::PlayerSounds.Pull]);
             grabControlInput = Vector2.zero;
         }

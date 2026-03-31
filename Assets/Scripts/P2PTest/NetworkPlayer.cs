@@ -5,11 +5,10 @@ using Mirror;
 public class NetworkPlayer : NetworkBehaviour
 {
     private InputPlayer inputPlayer;
-
     private Grab grab;
-
+    private Rigidbody2D childRb;
+    private UnityEngine.InputSystem.PlayerInput childPlayerInput;
     private Animator anim;
-
 
     [SyncVar(hook = nameof(OnFlipChanged))]
     private bool syncFlip = false;
@@ -20,17 +19,33 @@ public class NetworkPlayer : NetworkBehaviour
     [SyncVar(hook = nameof(OnAnimChanged))]
     private string syncAnimName = "";
 
-
     private void Awake()
     {
         anim = GetComponent<Animator>();
         inputPlayer = GetComponentInChildren<InputPlayer>();
         grab = GetComponentInChildren<Grab>();
+
+        if (inputPlayer != null)
+        {
+            childRb = inputPlayer.GetComponent<Rigidbody2D>();
+            childPlayerInput = inputPlayer.GetComponent<UnityEngine.InputSystem.PlayerInput>();
+        }
+    }
+
+    public override void OnStartLocalPlayer()
+    {
+        if (childPlayerInput != null) childPlayerInput.enabled = true;
+        if (childRb != null) childRb.isKinematic = false;
     }
 
     public override void OnStartClient()
     {
         base.OnStartClient();
+        if (!isLocalPlayer)
+        {
+            if (childPlayerInput != null) childPlayerInput.enabled = false;
+            if (childRb != null) childRb.isKinematic = true;
+        }
     }
 
     // ───────────────────────────────────────────
@@ -73,28 +88,24 @@ public class NetworkPlayer : NetworkBehaviour
         PlayAnimLocal(newVal);
     }
 
+    public void PlayAnimLocal(string animName)
+    {
+        if (inputPlayer == null) return;
+        if (InputPlayer.GloveAnimStates.Contains(animName))
+            inputPlayer.GloveAnim?.Play(animName);
+        else
+            anim?.Play(animName);
+    }
+
     public void SyncAnim(string animName)
     {
         CmdPlayAnimation(animName);
     }
 
-    public void PlayAnimLocal(string animName)
-    {
-        if (inputPlayer == null) return;
-
-        if (InputPlayer.GloveAnimStates.Contains(animName))
-        {
-            inputPlayer.GloveAnim?.Play(animName);
-        }
-        else
-        {
-            anim?.Play(animName);
-        }
-    }
-
     [Command]
     private void CmdPlayAnimation(string animName)
     {
+        syncAnimName = animName;
         RpcPlayAnimation(animName);
     }
 
@@ -116,7 +127,6 @@ public class NetworkPlayer : NetworkBehaviour
             grab.transform.localPosition = newVal;
     }
 
-    // Grab.cs 에서 호출
     public void SyncGlovePos(Vector3 localPos)
     {
         CmdUpdateGlovePos(localPos);
@@ -146,15 +156,14 @@ public class NetworkPlayer : NetworkBehaviour
     [ClientRpc]
     private void RpcMoveTarget(uint targetNetId, Vector3 targetPos)
     {
-        if (NetworkServer.spawned.TryGetValue(targetNetId, out NetworkIdentity identity))
-        {
+        if (NetworkClient.spawned.TryGetValue(targetNetId, out NetworkIdentity identity))
             identity.transform.position = targetPos;
-        }
     }
 
     // ───────────────────────────────────────────
     // 밀치기
     // ───────────────────────────────────────────
+
     public void SyncApplyPush(uint targetNetId, Vector2 dir, float power)
     {
         CmdApplyPush(targetNetId, dir, power);
@@ -169,7 +178,7 @@ public class NetworkPlayer : NetworkBehaviour
     [ClientRpc]
     private void RpcApplyPush(uint targetNetId, Vector2 dir, float power)
     {
-        if (!NetworkServer.spawned.TryGetValue(targetNetId, out NetworkIdentity identity)) return;
+        if (!NetworkClient.spawned.TryGetValue(targetNetId, out NetworkIdentity identity)) return;
         if (identity.TryGetComponent<Rigidbody2D>(out Rigidbody2D rigid))
         {
             rigid.AddForce(dir * power, ForceMode2D.Impulse);
