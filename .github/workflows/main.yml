@@ -1,30 +1,30 @@
 name: Automated Build ⭐
 
 on:
-  push: # Master 브랜치에 Push가 되면 빌드가 되도록 동작시킵니다.
+  push:
     branches: [ main, develop ]
-    
+  # 👇 이 부분이 추가되어 수동 빌드가 가능해집니다.
+  workflow_dispatch: 
+
 jobs:
   buildWindows:
     name: 💻 Windows-64 Bit
-    runs-on: windows-latest # 윈도우를 사용합니다.
+    runs-on: windows-latest
     
     steps:
-      # Checkout
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           lfs: true
 
-      # Cache (캐시파일을 생성하여 다음 빌드시 더 빠르게 빌드를 할 수 있도록 해줍니다.)
-      - uses: actions/cache@v4
+      - name: Cache Unity Library
+        uses: actions/cache@v4
         with:
           path: Library
           key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
           restore-keys: |
             Library-
 
-      # Build
       - name: Build project
         uses: game-ci/unity-builder@v4
         env:
@@ -34,8 +34,8 @@ jobs:
         with:
           targetPlatform: StandaloneWindows64
 
-      # Output
-      - uses: actions/upload-artifact@v4
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: Windows Build
+          name: Windows-Build-${{ github.run_number }}
           path: build
