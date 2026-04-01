@@ -14,13 +14,12 @@ public class PushGlove : MonoBehaviour
     public bool _canPush = true;
 
     [SerializeField] private Vector3 startLocalPos;
-    private bool isAnimating = false;   
+    private bool isAnimating = false;
 
     private void Awake()
     {
         player = GetComponentInParent<InputPlayer>();
     }
-
 
     // ───────────────────────────────────────────
     // 충돌 감지
@@ -34,7 +33,7 @@ public class PushGlove : MonoBehaviour
 
         if (collision.gameObject.CompareTag("interactive") || collision.gameObject.CompareTag("Player"))
         {
-            Rigidbody2D rigid = collision.gameObject.GetComponent<Rigidbody2D>();
+            Rigidbody2D rigid = collision.attachedRigidbody;
             if (rigid == null) return;
 
             Vector2 dir = (gameObject.transform.position.x < collision.gameObject.transform.position.x)
@@ -58,6 +57,10 @@ public class PushGlove : MonoBehaviour
         }
     }
 
+    // ───────────────────────────────────────────
+    // 밀치기 장갑 이동 애니메이션
+    // ───────────────────────────────────────────
+
     public void DoPunchAnim()
     {
         if (!isAnimating)
@@ -76,7 +79,6 @@ public class PushGlove : MonoBehaviour
         {
             elapsed += Time.deltaTime;
             transform.localPosition = Vector3.Lerp(startLocalPos, targetLocalPos, elapsed / duration);
-            player.SyncGlovePushPos(transform.localPosition);
             yield return null;
         }
         transform.localPosition = targetLocalPos;
@@ -87,11 +89,9 @@ public class PushGlove : MonoBehaviour
         {
             elapsed += Time.deltaTime;
             transform.localPosition = Vector3.Lerp(targetLocalPos, startLocalPos, elapsed / duration);
-            player.SyncGlovePushPos(transform.localPosition);
             yield return null;
         }
         transform.localPosition = startLocalPos;
-        player.SyncGlovePushPos(startLocalPos);
 
         isAnimating = false;
     }
