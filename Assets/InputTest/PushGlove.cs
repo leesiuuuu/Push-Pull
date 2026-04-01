@@ -35,7 +35,6 @@ public class PushGlove : MonoBehaviour
         if (collision.gameObject.CompareTag("interactive") || collision.gameObject.CompareTag("Player"))
         {
             Rigidbody2D rigid = collision.gameObject.GetComponent<Rigidbody2D>();
-            if (rigid == null) rigid = collision.gameObject.GetComponentInParent<Rigidbody2D>();
             if (rigid == null) return;
 
             Vector2 dir = (gameObject.transform.position.x < collision.gameObject.transform.position.x)
