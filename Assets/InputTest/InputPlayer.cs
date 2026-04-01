@@ -58,9 +58,6 @@ public class InputPlayer : NetworkBehaviour
     [SyncVar(hook = nameof(OnGlovePosChanged))]
     private Vector3 syncGloveLocalPos;
 
-    [SyncVar(hook = nameof(OnGlovePushPosChanged))]
-    private Vector3 syncGlovePushLocalPos;
-
     [SyncVar(hook = nameof(OnAnimChanged))]
     private string syncAnimName = "";
 
@@ -171,14 +168,6 @@ public class InputPlayer : NetworkBehaviour
     private void CmdPlayAnimation(string animName)
     {
         syncAnimName = animName;
-        RpcPlayAnimation(animName);
-    }
-
-    [ClientRpc]
-    private void RpcPlayAnimation(string animName)
-    {
-        if (isLocalPlayer) return;
-        PlayAnimLocal(animName);
     }
 
     // ───────────────────────────────────────────
@@ -227,31 +216,26 @@ public class InputPlayer : NetworkBehaviour
     }
 
     // ───────────────────────────────────────────
-    // 밀치기 글러브 위치 동기화
+    // 밀치기 장갑 펀치 애니메이션 동기화
     // ───────────────────────────────────────────
 
-    private void OnGlovePushPosChanged(Vector3 oldVal, Vector3 newVal)
+    public void SyncPunchAnim()
     {
-        if (isLocalPlayer) return;
-        if (PushGlove != null)
-            PushGlove.transform.localPosition = newVal;
-    }
-
-    public void SyncGlovePushPos(Vector3 localPos)
-    {
-        if (isLocalPlayer) CmdUpdateGlovePushPos(localPos);
+        CmdPunchAnim();
     }
 
     [Command]
-    private void CmdUpdateGlovePushPos(Vector3 localPos)
+    private void CmdPunchAnim()
     {
-        syncGlovePushLocalPos = localPos;
+        RpcPunchAnim();
     }
 
-    // ───────────────────────────────────────────
-    // 상대 플레이어 끌기
-    // ───────────────────────────────────────────
-
+    [ClientRpc]
+    private void RpcPunchAnim()
+    {
+        if (isLocalPlayer) return; 
+        PushGlove?.DoPunchAnim();
+    }
     public void SyncMoveTarget(uint targetNetId, Vector3 targetPos)
     {
         if (isLocalPlayer) CmdMoveTarget(targetNetId, targetPos);
@@ -354,8 +338,8 @@ public class InputPlayer : NetworkBehaviour
                 isCharging = false;
                 Push = true;
                 SoundManager.Instance?.SFXPlay("PlayerPush_1", PlayerSounds[(int)global::PlayerSounds.Push]);
-                // 밀치기 장갑 이동 애니메이션 실행
                 PushGlove?.DoPunchAnim();
+                SyncPunchAnim();
             }
         }
     }
