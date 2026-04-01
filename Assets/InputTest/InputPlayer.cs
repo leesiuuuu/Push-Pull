@@ -55,9 +55,6 @@ public class InputPlayer : NetworkBehaviour
     [SyncVar(hook = nameof(OnFlipChanged))]
     private bool syncFlip = false;
 
-    [SyncVar(hook = nameof(OnGlovePosChanged))]
-    private Vector3 syncGloveLocalPos;
-
     [SyncVar(hook = nameof(OnAnimChanged))]
     private string syncAnimName = "";
 
@@ -194,28 +191,6 @@ public class InputPlayer : NetworkBehaviour
     }
 
     // ───────────────────────────────────────────
-    // 그랩 글러브 위치 동기화
-    // ───────────────────────────────────────────
-
-    private void OnGlovePosChanged(Vector3 oldVal, Vector3 newVal)
-    {
-        if (isLocalPlayer) return;
-        if (GrabGlove != null)
-            GrabGlove.transform.localPosition = newVal;
-    }
-
-    public void SyncGlovePos(Vector3 localPos)
-    {
-        if (isLocalPlayer) CmdUpdateGlovePos(localPos);
-    }
-
-    [Command]
-    private void CmdUpdateGlovePos(Vector3 localPos)
-    {
-        syncGloveLocalPos = localPos;
-    }
-
-    // ───────────────────────────────────────────
     // 밀치기 장갑 펀치 애니메이션 동기화
     // ───────────────────────────────────────────
 
@@ -233,9 +208,14 @@ public class InputPlayer : NetworkBehaviour
     [ClientRpc]
     private void RpcPunchAnim()
     {
-        if (isLocalPlayer) return; 
+        if (isLocalPlayer) return;
         PushGlove?.DoPunchAnim();
     }
+
+    // ───────────────────────────────────────────
+    // 상대 플레이어 끌기
+    // ───────────────────────────────────────────
+
     public void SyncMoveTarget(uint targetNetId, Vector3 targetPos)
     {
         if (isLocalPlayer) CmdMoveTarget(targetNetId, targetPos);

@@ -34,6 +34,7 @@ public class Grab : MonoBehaviour
         targetingable = true;
     }
 
+
     private void Update()
     {
         if (Time.timeScale == 0) return;
@@ -56,11 +57,6 @@ public class Grab : MonoBehaviour
             {
                 Target.transform.position = gameObject.transform.position;
             }
-        }
-
-        if (player.isLocalPlayer && grabing)
-        {
-            player.SyncGlovePos(transform.localPosition);
         }
     }
 
@@ -200,8 +196,5 @@ public class Grab : MonoBehaviour
 
         grabing = false;
         ClearTarget();
-
-        if (player.isLocalPlayer)
-            player.SyncGlovePos(StartPos);
     }
 }
