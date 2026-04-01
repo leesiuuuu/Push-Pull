@@ -32,12 +32,12 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: StandaloneWindows64
+          buildName: "Push&Pull"
 
       # 빌드 파일 내부에 스팀 앱 ID 추가
       - name: Create steam_appid.txt
         shell: pwsh
         run: |
-          # 480은 테스트용 ID입니다. 실제 ID가 있다면 수정하세요.
           $buildPath = "build/StandaloneWindows64/steam_appid.txt"
           echo "480" > $buildPath
           Write-Host "Created steam_appid.txt at $buildPath"
