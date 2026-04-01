@@ -434,6 +434,7 @@ public class InputPlayer : NetworkBehaviour
 
     public bool ConsumePush(out float outCharge)
     {
+        Debug.Log("fjdkslnvkr");
         if (Push)
         {
             outCharge = PushCharge;
