@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 using Mirror;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class InputPlayer : MonoBehaviour
+public class InputPlayer : NetworkBehaviour
 {
     [SerializeField] private ExChargeUi UI;
     [SerializeField] private SoundManager soundManager;
@@ -15,18 +15,9 @@ public class InputPlayer : MonoBehaviour
     public Grab GrabGlove;
 
     [Header("Animators")]
-    public Animator GloveAnim;
-
-    // NetworkPlayer.PlayAnimLocal 에서 접근하므로 public static
-    public static readonly HashSet<string> GloveAnimStates = new HashSet<string>
-    {
-        "PushGlove",
-    };
+    public Animator Anim;
 
     public List<AudioClip> PlayerSounds = new List<AudioClip>();
-
-    // 최상위 부모의 NetworkPlayer 참조
-    private NetworkPlayer networkPlayer;
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
@@ -59,18 +50,41 @@ public class InputPlayer : MonoBehaviour
 
     public string ControlScheme = "Keyboard, Mouse";
 
-    public bool IsLocal => networkPlayer != null && networkPlayer.isLocalPlayer;
-
     private string lastAnimName = "";
+
+    [SyncVar(hook = nameof(OnFlipChanged))]
+    private bool syncFlip = false;
+
+    [SyncVar(hook = nameof(OnGlovePosChanged))]
+    private Vector3 syncGloveLocalPos;
+
+    [SyncVar(hook = nameof(OnGlovePushPosChanged))]
+    private Vector3 syncGlovePushLocalPos;
+
+    [SyncVar(hook = nameof(OnAnimChanged))]
+    private string syncAnimName = "";
 
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        networkPlayer = GetComponentInParent<NetworkPlayer>();
+        if (Anim == null) Anim = GetComponent<Animator>();
+    }
 
-        if (GloveAnim == null)
-            GloveAnim = GetComponentInChildren<Animator>();
+    public override void OnStartLocalPlayer()
+    {
+        if (PlayerInput != null) PlayerInput.enabled = true;
+        if (rb != null) rb.isKinematic = false;
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        if (!isLocalPlayer)
+        {
+            if (PlayerInput != null) PlayerInput.enabled = false;
+            if (rb != null) rb.isKinematic = true;
+        }
     }
 
     void OnEnable()
@@ -78,9 +92,10 @@ public class InputPlayer : MonoBehaviour
         if (PlayerInput != null) ControlScheme = PlayerInput.currentControlScheme;
     }
 
+
     void Update()
     {
-        if (!IsLocal) return;
+        if (!isLocalPlayer) return;
         if (Time.timeScale == 0f) return;
         if (cantMove) return;
 
@@ -112,7 +127,7 @@ public class InputPlayer : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!IsLocal) return;
+        if (!isLocalPlayer) return;
         if (Time.timeScale == 0f) return;
         if (cantMove) return;
 
@@ -126,18 +141,160 @@ public class InputPlayer : MonoBehaviour
     }
 
     // ───────────────────────────────────────────
-    // 애니메이션
+    // 애니메이션 동기화
     // ───────────────────────────────────────────
+
+    private void OnAnimChanged(string oldVal, string newVal)
+    {
+        if (isLocalPlayer) return;
+        PlayAnimLocal(newVal);
+    }
 
     public void PlayAnim(string animName)
     {
-        networkPlayer?.PlayAnimLocal(animName);
+        PlayAnimLocal(animName);
 
         if (animName != lastAnimName)
         {
             lastAnimName = animName;
-            networkPlayer?.SyncAnim(animName);
+            CmdPlayAnimation(animName);
         }
+    }
+
+    private void PlayAnimLocal(string animName)
+    {
+        if (string.IsNullOrEmpty(animName)) return;
+        Anim?.Play(animName);
+    }
+
+    [Command]
+    private void CmdPlayAnimation(string animName)
+    {
+        syncAnimName = animName;
+        RpcPlayAnimation(animName);
+    }
+
+    [ClientRpc]
+    private void RpcPlayAnimation(string animName)
+    {
+        if (isLocalPlayer) return;
+        PlayAnimLocal(animName);
+    }
+
+    // ───────────────────────────────────────────
+    // 플립 동기화
+    // ───────────────────────────────────────────
+
+    private void OnFlipChanged(bool oldVal, bool newVal)
+    {
+        if (isLocalPlayer) return;
+        ApplyFlip(newVal);
+    }
+
+    private void ApplyFlip(bool isFlipped)
+    {
+        Vector3 scale = transform.localScale;
+        scale.x = isFlipped ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
+        transform.localScale = scale;
+    }
+
+    [Command]
+    private void CmdSyncFlip(bool isFlipped)
+    {
+        syncFlip = isFlipped;
+    }
+
+    // ───────────────────────────────────────────
+    // 그랩 글러브 위치 동기화
+    // ───────────────────────────────────────────
+
+    private void OnGlovePosChanged(Vector3 oldVal, Vector3 newVal)
+    {
+        if (isLocalPlayer) return;
+        if (GrabGlove != null)
+            GrabGlove.transform.localPosition = newVal;
+    }
+
+    public void SyncGlovePos(Vector3 localPos)
+    {
+        if (isLocalPlayer) CmdUpdateGlovePos(localPos);
+    }
+
+    [Command]
+    private void CmdUpdateGlovePos(Vector3 localPos)
+    {
+        syncGloveLocalPos = localPos;
+    }
+
+    // ───────────────────────────────────────────
+    // 밀치기 글러브 위치 동기화
+    // ───────────────────────────────────────────
+
+    private void OnGlovePushPosChanged(Vector3 oldVal, Vector3 newVal)
+    {
+        if (isLocalPlayer) return;
+        if (PushGlove != null)
+            PushGlove.transform.localPosition = newVal;
+    }
+
+    public void SyncGlovePushPos(Vector3 localPos)
+    {
+        if (isLocalPlayer) CmdUpdateGlovePushPos(localPos);
+    }
+
+    [Command]
+    private void CmdUpdateGlovePushPos(Vector3 localPos)
+    {
+        syncGlovePushLocalPos = localPos;
+    }
+
+    // ───────────────────────────────────────────
+    // 상대 플레이어 끌기
+    // ───────────────────────────────────────────
+
+    public void SyncMoveTarget(uint targetNetId, Vector3 targetPos)
+    {
+        if (isLocalPlayer) CmdMoveTarget(targetNetId, targetPos);
+    }
+
+    [Command]
+    private void CmdMoveTarget(uint targetNetId, Vector3 targetPos)
+    {
+        RpcMoveTarget(targetNetId, targetPos);
+    }
+
+    [ClientRpc]
+    private void RpcMoveTarget(uint targetNetId, Vector3 targetPos)
+    {
+        if (NetworkClient.spawned.TryGetValue(targetNetId, out NetworkIdentity identity))
+            identity.transform.position = targetPos;
+    }
+
+    // ───────────────────────────────────────────
+    // 밀치기
+    // ───────────────────────────────────────────
+
+    public void SyncApplyPush(uint targetNetId, Vector2 dir, float power)
+    {
+        if (isLocalPlayer) CmdApplyPush(targetNetId, dir, power);
+    }
+
+    [Command]
+    private void CmdApplyPush(uint targetNetId, Vector2 dir, float power)
+    {
+        RpcApplyPush(targetNetId, dir, power);
+    }
+
+    [ClientRpc]
+    private void RpcApplyPush(uint targetNetId, Vector2 dir, float power)
+    {
+        if (!NetworkClient.spawned.TryGetValue(targetNetId, out NetworkIdentity identity)) return;
+        Rigidbody2D rigid = identity.GetComponent<Rigidbody2D>();
+        if (rigid == null) rigid = identity.GetComponentInChildren<Rigidbody2D>();
+        if (rigid == null) return;
+
+        rigid.AddForce(dir * power, ForceMode2D.Impulse);
+        rigid.AddForce(Vector2.up * power / 2f, ForceMode2D.Impulse);
     }
 
     // ───────────────────────────────────────────
@@ -146,7 +303,7 @@ public class InputPlayer : MonoBehaviour
 
     public void OnMoveLeft(InputAction.CallbackContext context)
     {
-        if (!IsLocal) return;
+        if (!isLocalPlayer) return;
         if (context.started || context.performed) moveLeft = true;
         else if (context.canceled) moveLeft = false;
         UpdateMoveInput();
@@ -154,7 +311,7 @@ public class InputPlayer : MonoBehaviour
 
     public void OnMoveRight(InputAction.CallbackContext context)
     {
-        if (!IsLocal) return;
+        if (!isLocalPlayer) return;
         if (context.started || context.performed) moveRight = true;
         else if (context.canceled) moveRight = false;
         UpdateMoveInput();
@@ -170,7 +327,7 @@ public class InputPlayer : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (!IsLocal) return;
+        if (!isLocalPlayer) return;
         if (context.performed && jumpAble)
         {
             rb.AddForce(Vector2.up * 15f, ForceMode2D.Impulse);
@@ -182,7 +339,7 @@ public class InputPlayer : MonoBehaviour
 
     public void OnPush(InputAction.CallbackContext context)
     {
-        if (!IsLocal) return;
+        if (!isLocalPlayer) return;
         if (context.started)
         {
             PushHeld = true;
@@ -197,13 +354,15 @@ public class InputPlayer : MonoBehaviour
                 isCharging = false;
                 Push = true;
                 SoundManager.Instance?.SFXPlay("PlayerPush_1", PlayerSounds[(int)global::PlayerSounds.Push]);
+                // 밀치기 장갑 이동 애니메이션 실행
+                PushGlove?.DoPunchAnim();
             }
         }
     }
 
     public void OnGrab(InputAction.CallbackContext context)
     {
-        if (!IsLocal) return;
+        if (!isLocalPlayer) return;
         if (context.started)
         {
             GrabHeld = true;
@@ -223,7 +382,7 @@ public class InputPlayer : MonoBehaviour
 
     public void OnGrabControll(InputAction.CallbackContext context)
     {
-        if (!IsLocal) return;
+        if (!isLocalPlayer) return;
         grabControlInput = context.ReadValue<Vector2>();
     }
 
@@ -305,7 +464,8 @@ public class InputPlayer : MonoBehaviour
     public void Flip()
     {
         flip = !flip;
-        networkPlayer?.SyncFlip(flip);
+        ApplyFlip(flip);
+        if (isLocalPlayer) CmdSyncFlip(flip);
     }
 
     public bool ConsumePush(out float outCharge)
@@ -323,7 +483,7 @@ public class InputPlayer : MonoBehaviour
 
     public void Die()
     {
-        if (!IsLocal) return;
+        if (!isLocalPlayer) return;
         SoundManager.Instance.SFXPlay("PlayerDied_1", PlayerSounds[(int)global::PlayerSounds.Die]);
         cantMove = true;
         PlayAnim("Die");
@@ -331,7 +491,7 @@ public class InputPlayer : MonoBehaviour
 
     public void Cleared()
     {
-        if (!IsLocal) return;
+        if (!isLocalPlayer) return;
         cantMove = true;
         PlayAnim("Cleared");
     }
