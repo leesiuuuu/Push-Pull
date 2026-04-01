@@ -93,6 +93,8 @@ public class PushGlove : MonoBehaviour
         }
         transform.localPosition = startLocalPos;
 
+        player.ConsumePush(out _PushPower);
+
         isAnimating = false;
     }
 
