@@ -279,6 +279,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _PushPower: 0
   _canPush: 1
+  startLocalPos: {x: 0.7, y: -0.09, z: -0.07203}
 --- !u!114 &124649551092450867
 MonoBehaviour:
   m_ObjectHideFlags: 0
