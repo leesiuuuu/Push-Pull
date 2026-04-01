@@ -4,7 +4,6 @@ using UnityEngine;
 public class Grab : MonoBehaviour
 {
     InputPlayer player;
-    NetworkPlayer networkPlayer;
 
     public Transform Target;
 
@@ -24,7 +23,6 @@ public class Grab : MonoBehaviour
     private void Awake()
     {
         player = GetComponentInParent<InputPlayer>();
-        networkPlayer = GetComponentInParent<NetworkPlayer>();
     }
 
     private void Start()
@@ -35,6 +33,7 @@ public class Grab : MonoBehaviour
         grabing = false;
         targetingable = true;
     }
+
 
     private void Update()
     {
@@ -52,25 +51,24 @@ public class Grab : MonoBehaviour
             if (GrabPlayer)
             {
                 if (hasNetworkTarget)
-                    networkPlayer?.SyncMoveTarget(cachedTargetNetId, gameObject.transform.position);
+                    player.SyncMoveTarget(cachedTargetNetId, gameObject.transform.position);
             }
             else
             {
                 Target.transform.position = gameObject.transform.position;
             }
         }
-
-        if (player.IsLocal && grabing)
-        {
-            networkPlayer?.SyncGlovePos(transform.localPosition);
-        }
     }
+
+    // ───────────────────────────────────────────
+    // Target 캐싱
+    // ───────────────────────────────────────────
 
     private void SetTarget(GameObject targetObj)
     {
         Target = targetObj.transform;
 
-        var netIdentity = targetObj.GetComponent<Mirror.NetworkIdentity>();
+        var netIdentity = targetObj.GetComponentInParent<Mirror.NetworkIdentity>();
         if (netIdentity != null)
         {
             cachedTargetNetId = netIdentity.netId;
@@ -90,9 +88,13 @@ public class Grab : MonoBehaviour
         hasNetworkTarget = false;
     }
 
+    // ───────────────────────────────────────────
+    // Grab 실행
+    // ───────────────────────────────────────────
+
     public void DOGrab()
     {
-        if (!player.IsLocal) return;
+        if (!player.isLocalPlayer) return;
 
         if (!grabing)
         {
@@ -101,13 +103,18 @@ public class Grab : MonoBehaviour
         }
     }
 
+    // ───────────────────────────────────────────
+    // 충돌 감지
+    // ───────────────────────────────────────────
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!player.IsLocal) return;
+        if (!player.isLocalPlayer) return;
 
         if (collision.gameObject.CompareTag("Player"))
         {
-            if (!collision.gameObject.GetComponentInChildren<Grab>().GrabPlayer)
+            var otherGrab = collision.gameObject.GetComponentInChildren<Grab>();
+            if (otherGrab != null && !otherGrab.GrabPlayer)
             {
                 GrabPlayer = true;
                 if (grabing && targetingable)
@@ -138,6 +145,10 @@ public class Grab : MonoBehaviour
             StartCoroutine(BackGrab());
         }
     }
+
+    // ───────────────────────────────────────────
+    // 코루틴
+    // ───────────────────────────────────────────
 
     public IEnumerator GoGrab()
     {
@@ -185,8 +196,5 @@ public class Grab : MonoBehaviour
 
         grabing = false;
         ClearTarget();
-
-        if (player.IsLocal)
-            networkPlayer?.SyncGlovePos(StartPos);
     }
 }
