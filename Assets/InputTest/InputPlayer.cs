@@ -112,7 +112,14 @@ public class InputPlayer : NetworkBehaviour
 
         if (PushGlove != null) PushGlove.PushPower = PushCharge;
 
-        if (GrabGlove != null && !GrabGlove.grabing) UpdateGrabRotation();
+        if (GrabHeld && GrabGlove != null && !GrabGlove.grabing && !isGrabHolding)
+        {
+            isGrabHolding = true;
+            RPressTime = Time.time;
+        }
+
+        if (GrabGlove != null && !GrabGlove.grabing)
+            UpdateGrabRotation();
 
         if (jumpAble)
         {
@@ -338,12 +345,20 @@ public class InputPlayer : NetworkBehaviour
     public void OnGrab(InputAction.CallbackContext context)
     {
         if (!isLocalPlayer) return;
+
         if (context.started)
         {
             GrabHeld = true;
-            isGrabHolding = true;
-            RPressTime = Time.time;
-            if (GrabObject != null) GrabObject.rotation = Quaternion.Euler(0f, 0f, 0f);
+
+            // 그랩이 이미 돌아와 있으면 바로 회전 가능
+            if (GrabGlove != null && !GrabGlove.grabing)
+            {
+                isGrabHolding = true;
+                RPressTime = Time.time;
+
+                if (GrabObject != null)
+                    GrabObject.rotation = Quaternion.Euler(0f, 0f, 0f);
+            }
         }
         else if (context.canceled)
         {
