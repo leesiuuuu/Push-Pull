@@ -257,8 +257,12 @@ public class InputPlayer : NetworkBehaviour
         if (rigid == null) rigid = identity.GetComponentInChildren<Rigidbody2D>();
         if (rigid == null) return;
 
-        rigid.AddForce(dir * power, ForceMode2D.Impulse);
-        rigid.AddForce(Vector2.up * power / 2f, ForceMode2D.Impulse);
+        Vector2 impulse = (dir * power + Vector2.up * power / 2f) / rigid.mass;
+
+        if (rigid.isKinematic)
+            rigid.velocity += impulse;
+        else
+            rigid.AddForce(dir * power + Vector2.up * power / 2f, ForceMode2D.Impulse);
     }
 
     // 式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式
