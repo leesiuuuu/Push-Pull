@@ -383,12 +383,14 @@ public class InputPlayer : NetworkBehaviour
                 world.z = GrabObject.position.z;
 
                 Vector3 dirWorld = world - GrabObject.position;
-                Vector3 dirLocal = transform.InverseTransformDirection(dirWorld);
 
-                if (dirLocal.sqrMagnitude > 0.0001f)
+                if (dirWorld.sqrMagnitude > 0.0001f)
                 {
-                    float rawLocalAngle = Mathf.Atan2(dirLocal.y, dirLocal.x) * Mathf.Rad2Deg;
-                    float desiredLocal = Mathf.Clamp(rawLocalAngle, -Mathf.Abs(maxAngle), Mathf.Abs(maxAngle));
+                    float facingSign = flip ? -1f : 1f;
+                    float adjustedX = dirWorld.x * facingSign;
+
+                    float desiredLocal = Mathf.Atan2(dirWorld.y, adjustedX) * Mathf.Rad2Deg;
+                    desiredLocal = Mathf.Clamp(desiredLocal, -Mathf.Abs(maxAngle), Mathf.Abs(maxAngle));
                     float currentLocalZ = GrabObject.localEulerAngles.z;
                     float smoothLocalZ = Mathf.LerpAngle(currentLocalZ, desiredLocal, Time.deltaTime * aimSmooth);
                     GrabObject.localRotation = Quaternion.Euler(0f, 0f, smoothLocalZ);
