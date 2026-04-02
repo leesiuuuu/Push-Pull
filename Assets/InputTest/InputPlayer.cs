@@ -23,6 +23,7 @@ public class InputPlayer : NetworkBehaviour
     private Vector2 moveInput;
     private bool moveLeft = false;
     private bool moveRight = false;
+    private bool moving = false;    
     public float moveSpeed = 4f;
     [SerializeField] private bool flip;
     [SerializeField] private float flipThreshold = 0.2f;
@@ -92,6 +93,8 @@ public class InputPlayer : NetworkBehaviour
         if (Time.timeScale == 0f) return;
         if (cantMove) return;
 
+        moving = moveRight ^ moveLeft;
+
         if (PushHeld) UI.OnPush();
         else UI.OffPush();
 
@@ -124,7 +127,17 @@ public class InputPlayer : NetworkBehaviour
         if (Time.timeScale == 0f) return;
         if (cantMove) return;
 
-        rb.velocity = new Vector2(moveInput.x * moveSpeed, rb.velocity.y);
+        if (moving)
+        {
+            Vector3 move = new Vector3(moveInput.x * moveSpeed * Time.deltaTime, 0f, 0f);
+            transform.Translate(move);
+        }
+
+        //if (moving)
+        //{
+        //    Vector2 moveDelta = new Vector2(moveInput.x * moveSpeed * Time.fixedDeltaTime, 0f);
+        //    rb.MovePosition(rb.position + moveDelta);
+        //}
 
         if (Mathf.Abs(moveInput.x) > flipThreshold && GrabGlove != null && !GrabGlove.grabing)
         {
