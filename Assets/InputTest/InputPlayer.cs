@@ -52,6 +52,9 @@ public class InputPlayer : NetworkBehaviour
 
     private string lastAnimName = "";
 
+    private float pushVelocityTimer = 0f;
+    private const float pushVelocityDuration = 0.3f;
+
     [SyncVar(hook = nameof(OnFlipChanged))]
     private bool syncFlip = false;
 
@@ -125,7 +128,15 @@ public class InputPlayer : NetworkBehaviour
         if (Time.timeScale == 0f) return;
         if (cantMove) return;
 
-        rb.velocity = new Vector2(moveInput.x * moveSpeed, rb.velocity.y);
+        // 밀림 타이머가 남아있으면 x velocity 덮어쓰지 않음
+        if (pushVelocityTimer > 0f)
+        {
+            pushVelocityTimer -= Time.fixedDeltaTime;
+        }
+        else
+        {
+            rb.velocity = new Vector2(moveInput.x * moveSpeed, rb.velocity.y);
+        }
 
         if (Mathf.Abs(moveInput.x) > flipThreshold && GrabGlove != null && !GrabGlove.grabing)
         {
@@ -254,15 +265,25 @@ public class InputPlayer : NetworkBehaviour
     {
         if (!NetworkClient.spawned.TryGetValue(targetNetId, out NetworkIdentity identity)) return;
         Rigidbody2D rigid = identity.GetComponent<Rigidbody2D>();
-        if (rigid == null) rigid = identity.GetComponentInChildren<Rigidbody2D>();
         if (rigid == null) return;
 
         Vector2 impulseVector = dir * power + Vector2.up * power / 2f;
 
         if (rigid.isKinematic)
+        {
             rigid.velocity += impulseVector / rigid.mass;
+            // 밀린 플레이어의 x velocity 덮어쓰기 방지 타이머 시작
+            var targetPlayer = identity.GetComponent<InputPlayer>();
+            if (targetPlayer != null) targetPlayer.StartPushTimer();
+        }
         else
             rigid.AddForce(impulseVector, ForceMode2D.Impulse);
+    }
+
+    // 외부(RpcApplyPush)에서 호출
+    public void StartPushTimer()
+    {
+        pushVelocityTimer = pushVelocityDuration;
     }
 
     // ───────────────────────────────────────────

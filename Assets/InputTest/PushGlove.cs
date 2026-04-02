@@ -36,11 +36,11 @@ public class PushGlove : MonoBehaviour
             Rigidbody2D rigid = collision.attachedRigidbody;
             if (rigid == null) return;
 
-            Vector2 dir = (gameObject.transform.position.x < collision.gameObject.transform.position.x)
+            Vector2 dir = (player.gameObject.transform.position.x < collision.gameObject.transform.position.x)
                 ? Vector2.right
                 : Vector2.left;
 
-            var targetIdentity = collision.gameObject.GetComponentInParent<Mirror.NetworkIdentity>();
+            var targetIdentity = collision.gameObject.GetComponent<Mirror.NetworkIdentity>();
 
             if (targetIdentity != null)
             {
@@ -75,6 +75,7 @@ public class PushGlove : MonoBehaviour
         float duration = 0.17f;
         float elapsed = 0f;
 
+        // 앞으로 나가기
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
@@ -85,6 +86,7 @@ public class PushGlove : MonoBehaviour
 
         elapsed = 0f;
 
+        // 원래 위치로 복귀
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
@@ -93,8 +95,7 @@ public class PushGlove : MonoBehaviour
         }
         transform.localPosition = startLocalPos;
 
-        player.ConsumePush(out _PushPower);
-
+        player.Push = false;
         isAnimating = false;
     }
 
