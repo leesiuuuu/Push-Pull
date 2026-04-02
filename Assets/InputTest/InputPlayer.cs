@@ -77,7 +77,6 @@ public class InputPlayer : NetworkBehaviour
         if (!isLocalPlayer)
         {
             if (PlayerInput != null) PlayerInput.enabled = false;
-            if (rb != null) rb.isKinematic = true;
         }
     }
 
@@ -257,15 +256,7 @@ public class InputPlayer : NetworkBehaviour
         if (rigid == null) return;
 
         Vector2 impulseVector = dir * power + Vector2.up * power / 2f;
-
-        if (rigid.isKinematic)
-        {
-            rigid.isKinematic = false;
-            rigid.AddForce(impulseVector, ForceMode2D.Impulse);
-            rigid.isKinematic = true;
-        }
-        else
-            rigid.AddForce(impulseVector, ForceMode2D.Impulse);
+        rigid.AddForce(impulseVector, ForceMode2D.Impulse);
     }
 
     // ───────────────────────────────────────────
