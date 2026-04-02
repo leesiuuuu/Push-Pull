@@ -93,8 +93,7 @@ public class InputPlayer : NetworkBehaviour
         if (Time.timeScale == 0f) return;
         if (cantMove) return;
 
-        if (moveLeft || moveRight)  moving = true;
-        else moving = false;
+        moving = moveRight ^ moveLeft;
 
         if (PushHeld) UI.OnPush();
         else UI.OffPush();
@@ -133,7 +132,13 @@ public class InputPlayer : NetworkBehaviour
             Vector3 move = new Vector3(moveInput.x * moveSpeed * Time.deltaTime, 0f, 0f);
             transform.Translate(move);
         }
-        
+
+        //if (moving)
+        //{
+        //    Vector2 moveDelta = new Vector2(moveInput.x * moveSpeed * Time.fixedDeltaTime, 0f);
+        //    rb.MovePosition(rb.position + moveDelta);
+        //}
+
         if (Mathf.Abs(moveInput.x) > flipThreshold && GrabGlove != null && !GrabGlove.grabing)
         {
             if (moveInput.x > 0f && flip) Flip();
