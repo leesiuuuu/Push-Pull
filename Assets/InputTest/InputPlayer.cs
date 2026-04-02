@@ -257,8 +257,12 @@ public class InputPlayer : NetworkBehaviour
         if (rigid == null) rigid = identity.GetComponentInChildren<Rigidbody2D>();
         if (rigid == null) return;
 
-        rigid.AddForce(dir * power, ForceMode2D.Impulse);
-        rigid.AddForce(Vector2.up * power / 2f, ForceMode2D.Impulse);
+        Vector2 impulseVector = dir * power + Vector2.up * power / 2f;
+
+        if (rigid.isKinematic)
+            rigid.velocity += impulseVector / rigid.mass;
+        else
+            rigid.AddForce(impulseVector, ForceMode2D.Impulse);
     }
 
     // 式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式
@@ -434,7 +438,6 @@ public class InputPlayer : NetworkBehaviour
 
     public bool ConsumePush(out float outCharge)
     {
-        Debug.Log("fjdkslnvkr");
         if (Push)
         {
             outCharge = PushCharge;
