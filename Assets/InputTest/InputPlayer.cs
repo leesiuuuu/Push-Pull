@@ -112,7 +112,14 @@ public class InputPlayer : NetworkBehaviour
 
         if (PushGlove != null) PushGlove.PushPower = PushCharge;
 
-        if (GrabGlove != null && !GrabGlove.grabing) UpdateGrabRotation();
+        if (GrabHeld && GrabGlove != null && !GrabGlove.grabing && !isGrabHolding)
+        {
+            isGrabHolding = true;
+            RPressTime = Time.time;
+        }
+
+        if (GrabGlove != null && !GrabGlove.grabing)
+            UpdateGrabRotation();
 
         if (jumpAble)
         {
@@ -338,12 +345,20 @@ public class InputPlayer : NetworkBehaviour
     public void OnGrab(InputAction.CallbackContext context)
     {
         if (!isLocalPlayer) return;
+
         if (context.started)
         {
             GrabHeld = true;
-            isGrabHolding = true;
-            RPressTime = Time.time;
-            if (GrabObject != null) GrabObject.rotation = Quaternion.Euler(0f, 0f, 0f);
+
+            // 그랩이 이미 돌아와 있으면 바로 회전 가능
+            if (GrabGlove != null && !GrabGlove.grabing)
+            {
+                isGrabHolding = true;
+                RPressTime = Time.time;
+
+                if (GrabObject != null)
+                    GrabObject.rotation = Quaternion.Euler(0f, 0f, 0f);
+            }
         }
         else if (context.canceled)
         {
@@ -383,12 +398,14 @@ public class InputPlayer : NetworkBehaviour
                 world.z = GrabObject.position.z;
 
                 Vector3 dirWorld = world - GrabObject.position;
-                Vector3 dirLocal = transform.InverseTransformDirection(dirWorld);
 
-                if (dirLocal.sqrMagnitude > 0.0001f)
+                if (dirWorld.sqrMagnitude > 0.0001f)
                 {
-                    float rawLocalAngle = Mathf.Atan2(dirLocal.y, dirLocal.x) * Mathf.Rad2Deg;
-                    float desiredLocal = Mathf.Clamp(rawLocalAngle, -Mathf.Abs(maxAngle), Mathf.Abs(maxAngle));
+                    float facingSign = flip ? -1f : 1f;
+                    float adjustedX = dirWorld.x * facingSign;
+
+                    float desiredLocal = Mathf.Atan2(dirWorld.y, adjustedX) * Mathf.Rad2Deg;
+                    desiredLocal = Mathf.Clamp(desiredLocal, -Mathf.Abs(maxAngle), Mathf.Abs(maxAngle));
                     float currentLocalZ = GrabObject.localEulerAngles.z;
                     float smoothLocalZ = Mathf.LerpAngle(currentLocalZ, desiredLocal, Time.deltaTime * aimSmooth);
                     GrabObject.localRotation = Quaternion.Euler(0f, 0f, smoothLocalZ);
