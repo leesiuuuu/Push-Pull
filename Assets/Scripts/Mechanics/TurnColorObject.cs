@@ -35,10 +35,10 @@ public class TurnColorObject : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.TryGetComponent<NewPlayer1>(out var _) || collision.TryGetComponent<NewPlayer2>(out var _) || collision.gameObject.layer == 8)
-        {
-            TurnColor();
-        }
+        //if(collision.TryGetComponent<NewPlayer1>(out var _) || collision.TryGetComponent<NewPlayer2>(out var _) || collision.gameObject.layer == 8)
+        //{
+        //    TurnColor();
+        //}
     }
 
     void TurnColor()

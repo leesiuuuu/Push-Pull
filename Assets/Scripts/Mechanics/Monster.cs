@@ -57,17 +57,17 @@ public class Monster : MonoBehaviour
 
         bool frontBlocked = false;
 
-        foreach (var hit in hits)
-        {
-            if (hit.collider == null) continue;
+        //foreach (var hit in hits)
+        //{
+        //    if (hit.collider == null) continue;
 
-            if (hit.collider.GetComponent<NewPlayer1>() != null) continue;
-            if (hit.collider.GetComponent<NewPlayer2>() != null) continue;
-            if (hit.collider.transform == transform) continue;
+        //    if (hit.collider.GetComponent<NewPlayer1>() != null) continue;
+        //    if (hit.collider.GetComponent<NewPlayer2>() != null) continue;
+        //    if (hit.collider.transform == transform) continue;
 
-            frontBlocked = true;
-            break;
-        }
+        //    frontBlocked = true;
+        //    break;
+        //}
 
         Vector2 groundOrigin = origin + moveDir * 0.3f;
         RaycastHit2D groundHit = Physics2D.Raycast(
@@ -96,14 +96,14 @@ public class Monster : MonoBehaviour
     {
         if (isDead) return;
 
-        if (collision.gameObject.TryGetComponent<NewPlayer1>(out var player1))
-        {
-            KillPlayer(player1);
-        }
-        else if (collision.gameObject.TryGetComponent<NewPlayer2>(out var player2))
-        {
-            KillPlayer(player2);
-        }
+        //if (collision.gameObject.TryGetComponent<NewPlayer1>(out var player1))
+        //{
+        //    KillPlayer(player1);
+        //}
+        //else if (collision.gameObject.TryGetComponent<NewPlayer2>(out var player2))
+        //{
+        //    KillPlayer(player2);
+        //}
     }
 
     void KillPlayer(MonoBehaviour player)
