@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Idle2
+  m_Name: Idle_B
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -24,14 +24,14 @@ AnimationClip:
       value: {fileID: 380998116, guid: c3c7114566d546642958a86b76ce4553, type: 3}
     - time: 0.21666667
       value: {fileID: -2053443280, guid: c3c7114566d546642958a86b76ce4553, type: 3}
-    - time: 0.41666666
+    - time: 0.46666667
       value: {fileID: 1478993327, guid: c3c7114566d546642958a86b76ce4553, type: 3}
-    - time: 0.6333333
+    - time: 0.7
       value: {fileID: 485218798, guid: c3c7114566d546642958a86b76ce4553, type: 3}
-    - time: 0.8333333
+    - time: 0.9166667
       value: {fileID: -1124970734, guid: c3c7114566d546642958a86b76ce4553, type: 3}
     attribute: m_Sprite
-    path: Player2
+    path: 
     classID: 212
     script: {fileID: 0}
     flags: 2
@@ -43,7 +43,7 @@ AnimationClip:
   m_ClipBindingConstant:
     genericBindings:
     - serializedVersion: 2
-      path: 3894938428
+      path: 0
       attribute: 0
       script: {fileID: 0}
       typeID: 212
@@ -62,7 +62,7 @@ AnimationClip:
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.84999996
+    m_StopTime: 0.93333334
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0

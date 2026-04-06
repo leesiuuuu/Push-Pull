@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Move
+  m_Name: Move_W
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -37,7 +37,7 @@ AnimationClip:
     - time: 1
       value: {fileID: -1978687366, guid: ae9592d6b9c217848adb04feeac8c60b, type: 3}
     - time: 1.15
-      value: {fileID: 137515463, guid: 95ae13b7c3f9649408550b1f90350a9c, type: 3}
+      value: {fileID: 691596239, guid: ae9592d6b9c217848adb04feeac8c60b, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -68,7 +68,7 @@ AnimationClip:
     - {fileID: 2015448022, guid: ae9592d6b9c217848adb04feeac8c60b, type: 3}
     - {fileID: -596535544, guid: ae9592d6b9c217848adb04feeac8c60b, type: 3}
     - {fileID: -1978687366, guid: ae9592d6b9c217848adb04feeac8c60b, type: 3}
-    - {fileID: 137515463, guid: 95ae13b7c3f9649408550b1f90350a9c, type: 3}
+    - {fileID: 691596239, guid: ae9592d6b9c217848adb04feeac8c60b, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
