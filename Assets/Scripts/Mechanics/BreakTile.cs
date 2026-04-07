@@ -7,10 +7,16 @@ public class BreakTile : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.transform.GetComponent<NewPlayer1Anim>() || collision.transform.GetComponent<NewPlayer2Anim>())
+        if (collision.transform.GetComponent<InputPlayer>())
         {
             StartCoroutine(Shake(transform, 1, 0.1f));
         }
+
+        //기존부분
+        //if (collision.transform.GetComponent<NewPlayer1Anim>() || collision.transform.GetComponent<NewPlayer2Anim>())
+        //{
+        //    StartCoroutine(Shake(transform, 1, 0.1f));
+        //}
     }
 
     public IEnumerator Shake(Transform target, float duration, float strength)

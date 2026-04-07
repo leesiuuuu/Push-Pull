@@ -18,17 +18,28 @@ public class Obstacle : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.TryGetComponent<NewPlayer1>(out var player1))
+        if (collision.gameObject.TryGetComponent<InputPlayer>(out InputPlayer player))
         {
-            player1.Die();
-            bs.FadeOut();
-            levelLoader.LoadScene(SceneManager.GetActiveScene().name);
-        }
-        else if (collision.gameObject.TryGetComponent<NewPlayer2>(out var player2))
-        {
-            player2.Die();
+            player.Die();
             bs.FadeOut();
             levelLoader.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
+
+    //기존코드
+    //private void OnCollisionEnter2D(Collision2D collision)
+    //{
+    //    if (collision.gameObject.TryGetComponent<NewPlayer1>(out var player1))
+    //    {
+    //        player1.Die();
+    //        bs.FadeOut();
+    //        levelLoader.LoadScene(SceneManager.GetActiveScene().name);
+    //    }
+    //    else if (collision.gameObject.TryGetComponent<NewPlayer2>(out var player2))
+    //    {
+    //        player2.Die();
+    //        bs.FadeOut();
+    //        levelLoader.LoadScene(SceneManager.GetActiveScene().name);
+    //    }
+    //}
 }
