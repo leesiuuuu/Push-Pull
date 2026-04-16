@@ -2,6 +2,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Mirror;
+using System.Collections;
+using UnityEngine.U2D;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class InputPlayer : NetworkBehaviour
@@ -485,6 +487,33 @@ public class InputPlayer : NetworkBehaviour
     {
         if (!isLocalPlayer) return;
         cantMove = true;
-        PlayAnim("Cleared");
+        if(gameObject.TryGetComponent<SpriteRenderer>(out SpriteRenderer sprite))
+        {
+            StartCoroutine(FadeOutSprite(sprite, 0.5f));
+        }
     }
+
+    private IEnumerator FadeOutSprite(SpriteRenderer sprite, float duration)
+    {
+        Color startColor = sprite.color;
+        float startAlpha = startColor.a;
+        float time = 0f;
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            float t = time / duration;
+
+            Color newColor = sprite.color;
+            newColor.a = Mathf.Lerp(startAlpha, 0f, t);
+            sprite.color = newColor;
+
+            yield return null;
+        }
+
+        Color finalColor = sprite.color;
+        finalColor.a = 0f;
+        sprite.color = finalColor;
+    }
+
 }
