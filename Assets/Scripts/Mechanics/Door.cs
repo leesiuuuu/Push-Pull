@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class Door : MonoBehaviour
 {
-    private bool enterdPlayers;
+    private bool enteredPlayers;
 
     public bool isCleared;
 
@@ -28,20 +28,25 @@ public class Door : MonoBehaviour
         keyCount = currentKeys.Length;
     }
 
+    private void Update()
+    {
+        enteredPlayers = Players.Count >= 2;
+
+        if (enteredPlayers && !isCleared && keyCounter.KeyCount == keyCount)
+            StartCoroutine(NextStage());
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.TryGetComponent<InputPlayer>(out var Player))
+        if (collision.TryGetComponent<InputPlayer>(out var Player))
         {
             if (!Players.Contains(Player.gameObject))
             {
                 Players.Add(Player.gameObject);
             }
 
-            enterdPlayers = Players.Count >= 2;
+            enteredPlayers = Players.Count >= 2;
         }
-
-        if (enterdPlayers)
-            StartCoroutine(NextStage());
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -49,7 +54,7 @@ public class Door : MonoBehaviour
         if (collision.TryGetComponent<InputPlayer>(out var Player))
         {
             Players.Remove(Player.gameObject);
-            enterdPlayers = Players.Count >= 2;
+            enteredPlayers = Players.Count >= 2;
         }
     }
 
@@ -58,7 +63,7 @@ public class Door : MonoBehaviour
         if (isCleared)
             yield break;
 
-        if(keyCounter.KeyCount == keyCount)
+        if (keyCounter.KeyCount == keyCount)
         {
             isCleared = true;
             foreach (GameObject player in Players)
