@@ -10,7 +10,17 @@ public class Door : MonoBehaviour
     public bool isCleared;
 
     int keyCount;
-    int lastKeyCount;
+    private int currentKeyCount;
+    private int CurrentKeyCount
+    {
+        get => currentKeyCount;
+        set
+        {
+            if (currentKeyCount == value) return;
+            currentKeyCount = value;
+            TryOpenDoor();
+        }
+    }
 
     [SerializeField] GameObject clearUI;
     LevelLoader levelLoader;
@@ -29,16 +39,13 @@ public class Door : MonoBehaviour
         levelLoader = FindObjectOfType<LevelLoader>();
         Key[] currentKeys = FindObjectsOfType<Key>();
         keyCount = currentKeys.Length;
-        lastKeyCount = keyCounter.KeyCount;
+
+        CurrentKeyCount = keyCounter.KeyCount;
     }
 
     private void Update()
     {
-        if (lastKeyCount != keyCounter.KeyCount)
-        {
-            lastKeyCount = keyCounter.KeyCount;
-            TryOpenDoor();
-        }
+        CurrentKeyCount = keyCounter.KeyCount;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -67,7 +74,7 @@ public class Door : MonoBehaviour
     {
         enteredPlayers = Players.Count >= 2;
 
-        if (enteredPlayers && !isCleared && keyCounter.KeyCount == keyCount)
+        if (enteredPlayers && !isCleared && CurrentKeyCount == keyCount)
         {
             StartCoroutine(NextStage());
         }
@@ -78,7 +85,7 @@ public class Door : MonoBehaviour
         if (isCleared)
             yield break;
 
-        if (keyCounter.KeyCount == keyCount)
+        if (CurrentKeyCount == keyCount)
         {
             isCleared = true;
 
