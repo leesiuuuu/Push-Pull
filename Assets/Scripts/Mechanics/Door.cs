@@ -10,6 +10,8 @@ public class Door : MonoBehaviour
     public bool isCleared;
 
     int keyCount;
+    int lastKeyCount;
+
     [SerializeField] GameObject clearUI;
     LevelLoader levelLoader;
     KeyCounter keyCounter;
@@ -20,20 +22,23 @@ public class Door : MonoBehaviour
     AudioClip clip1;
     [SerializeField]
     AudioClip clip2;
+
     private void Start()
     {
         keyCounter = FindObjectOfType<KeyCounter>();
         levelLoader = FindObjectOfType<LevelLoader>();
         Key[] currentKeys = FindObjectsOfType<Key>();
         keyCount = currentKeys.Length;
+        lastKeyCount = keyCounter.KeyCount;
     }
 
     private void Update()
     {
-        enteredPlayers = Players.Count >= 2;
-
-        if (enteredPlayers && !isCleared && keyCounter.KeyCount == keyCount)
-            StartCoroutine(NextStage());
+        if (lastKeyCount != keyCounter.KeyCount)
+        {
+            lastKeyCount = keyCounter.KeyCount;
+            TryOpenDoor();
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -45,7 +50,7 @@ public class Door : MonoBehaviour
                 Players.Add(Player.gameObject);
             }
 
-            enteredPlayers = Players.Count >= 2;
+            TryOpenDoor();
         }
     }
 
@@ -58,6 +63,16 @@ public class Door : MonoBehaviour
         }
     }
 
+    private void TryOpenDoor()
+    {
+        enteredPlayers = Players.Count >= 2;
+
+        if (enteredPlayers && !isCleared && keyCounter.KeyCount == keyCount)
+        {
+            StartCoroutine(NextStage());
+        }
+    }
+
     IEnumerator NextStage()
     {
         if (isCleared)
@@ -66,6 +81,7 @@ public class Door : MonoBehaviour
         if (keyCounter.KeyCount == keyCount)
         {
             isCleared = true;
+
             foreach (GameObject player in Players)
             {
                 if (player.TryGetComponent<InputPlayer>(out var inputPlayer))
@@ -73,6 +89,7 @@ public class Door : MonoBehaviour
                     inputPlayer.Cleared();
                 }
             }
+
             SoundManager.Instance.SFXPlay("Clear", clip1);
             yield return new WaitForSeconds(1.5f);
             SoundManager.Instance.SFXPlay("Clear", clip2);
