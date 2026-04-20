@@ -1,40 +1,53 @@
+using Mirror;
 using Steamworks;
 using TMPro;
 using UnityEngine;
 
-public class PlayerID : MonoBehaviour
+public class PlayerID : NetworkBehaviour
 {
+    [SyncVar(hook = nameof(OnNameChanged))]
     public string playerName;
 
-    [SerializeField] private TMP_Text idText;
+    private TMP_Text idText;
     private InputPlayer player;
     private Vector3 initialTextScale;
     private bool lastFacingLeft;
 
     private void Awake()
     {
+        idText = GetComponent<TMP_Text>();
         player = GetComponentInParent<InputPlayer>();
         initialTextScale = transform.localScale;
-
-        if (SteamManager.Initialized)
-        {
-            playerName = SteamFriends.GetPersonaName();
-        }
-        else
-        {
-            playerName = string.Empty;
-            Debug.LogWarning("Steam is not initialized, so PlayerID could not read the local Steam ID.");
-        }
     }
 
-    private void Start()
+    public override void OnStartLocalPlayer()
+    {
+        if (!SteamManager.Initialized) return;
+
+        string myName = SteamFriends.GetPersonaName();
+        CmdSetPlayerName(myName);
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+
+        if (idText != null)
+            idText.text = playerName;
+
+        ApplyTextFlip(true);
+    }
+
+    [Command]
+    private void CmdSetPlayerName(string newName)
+    {
+        playerName = newName;
+    }
+
+    private void OnNameChanged(string oldName, string newName)
     {
         if (idText != null)
-        {
-            idText.text = playerName;
-        }
-
-        ApplyTextFlip(force: true);
+            idText.text = newName;
     }
 
     private void Update()
