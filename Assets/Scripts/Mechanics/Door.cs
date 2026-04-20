@@ -5,57 +5,79 @@ using UnityEngine.SceneManagement;
 
 public class Door : MonoBehaviour
 {
-    bool enteredPlayer1;
-    bool enteredPlayer2;
+    private bool enteredPlayers;
 
     public bool isCleared;
 
     int keyCount;
+    private int currentKeyCount;
+    private int CurrentKeyCount
+    {
+        get => currentKeyCount;
+        set
+        {
+            if (currentKeyCount == value) return;
+            currentKeyCount = value;
+            TryOpenDoor();
+        }
+    }
+
     [SerializeField] GameObject clearUI;
     LevelLoader levelLoader;
     KeyCounter keyCounter;
 
-    //NewPlayer1 player1;
-    //NewPlayer2 player2;
+    List<GameObject> Players = new List<GameObject>();
+
     [SerializeField]
     AudioClip clip1;
     [SerializeField]
     AudioClip clip2;
+
     private void Start()
     {
         keyCounter = FindObjectOfType<KeyCounter>();
         levelLoader = FindObjectOfType<LevelLoader>();
         Key[] currentKeys = FindObjectsOfType<Key>();
         keyCount = currentKeys.Length;
+
+        CurrentKeyCount = keyCounter.KeyCount;
+    }
+
+    private void Update()
+    {
+        CurrentKeyCount = keyCounter.KeyCount;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        //if(collision.TryGetComponent<NewPlayer1>(out var player1))
-        //{
-        //    enteredPlayer1 = true;
-        //    this.player1 = player1;
-        //}
-        //if(collision.TryGetComponent<NewPlayer2>(out var player2))
-        //{
-        //    enteredPlayer2 = true;
-        //    this.player2 = player2;
-        //}
+        if (collision.TryGetComponent<InputPlayer>(out var Player))
+        {
+            if (!Players.Contains(Player.gameObject))
+            {
+                Players.Add(Player.gameObject);
+            }
 
-        if (enteredPlayer1 && enteredPlayer2)
-            StartCoroutine(NextStage());
+            TryOpenDoor();
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        //if (collision.GetComponent<NewPlayer1>() != null)
-        //{
-        //    enteredPlayer1 = false;
-        //}
-        //if (collision.GetComponent<NewPlayer2>() != null)
-        //{
-        //    enteredPlayer2 = false;
-        //}
+        if (collision.TryGetComponent<InputPlayer>(out var Player))
+        {
+            Players.Remove(Player.gameObject);
+            enteredPlayers = Players.Count >= 2;
+        }
+    }
+
+    private void TryOpenDoor()
+    {
+        enteredPlayers = Players.Count >= 2;
+
+        if (enteredPlayers && !isCleared && CurrentKeyCount == keyCount)
+        {
+            StartCoroutine(NextStage());
+        }
     }
 
     IEnumerator NextStage()
@@ -63,11 +85,18 @@ public class Door : MonoBehaviour
         if (isCleared)
             yield break;
 
-        if(keyCounter.KeyCount == keyCount)
+        if (CurrentKeyCount == keyCount)
         {
             isCleared = true;
-            //player1.Cleared();
-            //player2.Cleared();
+
+            foreach (GameObject player in Players)
+            {
+                if (player.TryGetComponent<InputPlayer>(out var inputPlayer))
+                {
+                    inputPlayer.Cleared();
+                }
+            }
+
             SoundManager.Instance.SFXPlay("Clear", clip1);
             yield return new WaitForSeconds(1.5f);
             SoundManager.Instance.SFXPlay("Clear", clip2);

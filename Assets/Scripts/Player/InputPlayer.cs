@@ -2,6 +2,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Mirror;
+using System.Collections;
+using UnityEngine.U2D;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class InputPlayer : NetworkBehaviour
@@ -23,7 +25,7 @@ public class InputPlayer : NetworkBehaviour
     private Vector2 moveInput;
     private bool moveLeft = false;
     private bool moveRight = false;
-    private bool moving = false;    
+    private bool moving = false;
     public float moveSpeed = 4f;
     [SerializeField] private bool flip;
     [SerializeField] private float flipThreshold = 0.2f;
@@ -59,6 +61,7 @@ public class InputPlayer : NetworkBehaviour
     [SyncVar(hook = nameof(OnAnimChanged))]
     private string syncAnimName = "";
 
+    private bool clearedStarted = false;
 
     void Awake()
     {
@@ -483,8 +486,59 @@ public class InputPlayer : NetworkBehaviour
 
     public void Cleared()
     {
-        if (!isLocalPlayer) return;
+        if (isServer)
+        {
+            RpcCleared();
+            return;
+        }
+
+        if (isLocalPlayer)
+        {
+            CmdCleared();
+        }
+    }
+
+    [Command]
+    private void CmdCleared()
+    {
+        RpcCleared();
+    }
+
+    [ClientRpc]
+    private void RpcCleared()
+    {
+        if (clearedStarted) return;
+        clearedStarted = true;
+
         cantMove = true;
-        PlayAnim("Cleared");
+        PlayAnimLocal("Cleared");
+
+        if (gameObject.TryGetComponent<SpriteRenderer>(out SpriteRenderer sprite))
+        {
+            StartCoroutine(FadeOutSprite(sprite, 0.5f));
+        }
+    }
+
+    private IEnumerator FadeOutSprite(SpriteRenderer sprite, float duration)
+    {
+        Color startColor = sprite.color;
+        float startAlpha = startColor.a;
+        float time = 0f;
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            float t = time / duration;
+
+            Color newColor = sprite.color;
+            newColor.a = Mathf.Lerp(startAlpha, 0f, t);
+            sprite.color = newColor;
+
+            yield return null;
+        }
+
+        Color finalColor = sprite.color;
+        finalColor.a = 0f;
+        sprite.color = finalColor;
     }
 }
