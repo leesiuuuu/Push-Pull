@@ -50,7 +50,7 @@ public class PlayerID : NetworkBehaviour
             idText.text = newName;
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         ApplyTextFlip();
     }
