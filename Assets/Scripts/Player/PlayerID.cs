@@ -1,7 +1,7 @@
-using Mirror;
 using Steamworks;
 using TMPro;
 using UnityEngine;
+using Mirror;
 
 public class PlayerID : NetworkBehaviour
 {
@@ -12,6 +12,7 @@ public class PlayerID : NetworkBehaviour
     private InputPlayer player;
     private Vector3 initialTextScale;
     private bool lastFacingLeft;
+    private bool currentFacingLeft;
 
     private void Awake()
     {
@@ -24,8 +25,8 @@ public class PlayerID : NetworkBehaviour
     {
         if (!SteamManager.Initialized) return;
 
-        string myName = SteamFriends.GetPersonaName();
-        CmdSetPlayerName(myName);
+        playerName = SteamFriends.GetPersonaName();
+        CmdSetPlayerName(playerName);
     }
 
     public override void OnStartClient()
@@ -33,9 +34,16 @@ public class PlayerID : NetworkBehaviour
         base.OnStartClient();
 
         if (idText != null)
+        {
             idText.text = playerName;
+        }
 
-        ApplyTextFlip(true);
+        if (player != null)
+        {
+            lastFacingLeft = player.transform.localScale.x < 0f;
+        }
+
+        ApplyTextFlip();
     }
 
     [Command]
@@ -47,25 +55,26 @@ public class PlayerID : NetworkBehaviour
     private void OnNameChanged(string oldName, string newName)
     {
         if (idText != null)
+        {
             idText.text = newName;
+        }
     }
 
     private void LateUpdate()
     {
+        if (player == null) return;
+
+        currentFacingLeft = player.transform.localScale.x < 0f;
+        if (currentFacingLeft == lastFacingLeft) return;
+
+        lastFacingLeft = currentFacingLeft;
         ApplyTextFlip();
     }
 
-    private void ApplyTextFlip(bool force = false)
+    private void ApplyTextFlip()
     {
-        if (player == null) return;
-
-        bool facingLeft = player.transform.localScale.x < 0f;
-        if (!force && facingLeft == lastFacingLeft) return;
-
-        lastFacingLeft = facingLeft;
-
         Vector3 textScale = initialTextScale;
-        textScale.x = facingLeft ? -Mathf.Abs(initialTextScale.x) : Mathf.Abs(initialTextScale.x);
+        textScale.x = lastFacingLeft ? -Mathf.Abs(initialTextScale.x) : Mathf.Abs(initialTextScale.x);
         transform.localScale = textScale;
     }
 }
