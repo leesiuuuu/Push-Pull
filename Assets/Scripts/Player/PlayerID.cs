@@ -6,7 +6,8 @@ using Mirror;
 public class PlayerID : NetworkBehaviour
 {
     [SyncVar(hook = nameof(OnNameChanged))]
-    public string playerName;
+    [SerializeField] private string playerName;
+    public string PlayerName => playerName;
 
     private TMP_Text idText;
     private InputPlayer player;
