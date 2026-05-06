@@ -1,0 +1,81 @@
+using Steamworks;
+using TMPro;
+using UnityEngine;
+using Mirror;
+
+public class PlayerID : NetworkBehaviour
+{
+    [SyncVar(hook = nameof(OnNameChanged))]
+    [SerializeField] private string playerName;
+    public string PlayerName => playerName;
+
+    private TMP_Text idText;
+    private InputPlayer player;
+    private Vector3 initialTextScale;
+    private bool lastFacingLeft;
+    private bool currentFacingLeft;
+
+    private void Awake()
+    {
+        idText = GetComponent<TMP_Text>();
+        player = GetComponentInParent<InputPlayer>();
+        initialTextScale = transform.localScale;
+    }
+
+    public override void OnStartLocalPlayer()
+    {
+        if (!SteamManager.Initialized) return;
+
+        playerName = SteamFriends.GetPersonaName();
+        CmdSetPlayerName(playerName);
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+
+        if (idText != null)
+        {
+            idText.text = playerName;
+        }
+
+        if (player != null)
+        {
+            lastFacingLeft = player.transform.localScale.x < 0f;
+        }
+
+        ApplyTextFlip();
+    }
+
+    [Command]
+    private void CmdSetPlayerName(string newName)
+    {
+        playerName = newName;
+    }
+
+    private void OnNameChanged(string oldName, string newName)
+    {
+        if (idText != null)
+        {
+            idText.text = newName;
+        }
+    }
+
+    private void LateUpdate()
+    {
+        if (player == null) return;
+
+        currentFacingLeft = player.transform.localScale.x < 0f;
+        if (currentFacingLeft == lastFacingLeft) return;
+
+        lastFacingLeft = currentFacingLeft;
+        ApplyTextFlip();
+    }
+
+    private void ApplyTextFlip()
+    {
+        Vector3 textScale = initialTextScale;
+        textScale.x = lastFacingLeft ? -Mathf.Abs(initialTextScale.x) : Mathf.Abs(initialTextScale.x);
+        transform.localScale = textScale;
+    }
+}
