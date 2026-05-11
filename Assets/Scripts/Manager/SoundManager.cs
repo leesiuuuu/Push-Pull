@@ -89,7 +89,7 @@ public class SoundManager : MonoBehaviour
 		source.clip = clip;
 		source.Play();
 
-		StartCoroutine(DestroyAfterRealtime(source, clip.length));
+		StartCoroutine(ReleaseAfterRealtime(source, clip.length));
 	}
     public void BgFadeIn(AudioSource BgPlayer)
 	{
@@ -109,22 +109,22 @@ public class SoundManager : MonoBehaviour
 	}
 	public void BGSoundVolume(float val)
 	{
-		float n = Mathf.Log10(val) * 20;
-		audioMixer.SetFloat("MusicVolume", n);
+        float n = Mathf.Log10(Mathf.Max(val, 0.0001f)) * 20;
+        audioMixer.SetFloat("MusicVolume", n);
 		PlayerPrefs.SetFloat("MusicVolume", val);
 		PlayerPrefs.Save();
 	}
 	public void SFXSoundVolume(float val)
 	{
-		float n = Mathf.Log10(val) * 20;
-		audioMixer.SetFloat("SFXVolume", n);
+        float n = Mathf.Log10(Mathf.Max(val, 0.0001f)) * 20;
+        audioMixer.SetFloat("SFXVolume", n);
 		PlayerPrefs.SetFloat("SFXVolume", val);
 		PlayerPrefs.Save();
 	}
     #endregion
     
 	#region Coroutines
-    private IEnumerator DestroyAfterRealtime(AudioSource source, float delay)
+    private IEnumerator ReleaseAfterRealtime(AudioSource source, float delay)
 	{
 		yield return new WaitForSecondsRealtime(delay); // TimeScale 0이어도 기다림
 		sfxPool.Release(source);
