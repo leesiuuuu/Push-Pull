@@ -1,4 +1,4 @@
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEditor.UI;
 using UnityEngine;
 
@@ -7,8 +7,7 @@ using UnityEngine;
 public class UIButtonEditor : ButtonEditor
 {
     // 프로퍼티 변수들
-    SerializedProperty clickSoundProp;
-    SerializedProperty hoverSoundProp;
+    SerializedProperty soundInfoProp;
     SerializedProperty typeProp;
     SerializedProperty disableObjectProp;
     SerializedProperty enableObjectProp;
@@ -19,8 +18,7 @@ public class UIButtonEditor : ButtonEditor
     {
         base.OnEnable();
         // 실제 UIButton 클래스의 변수명과 일치해야 합니다.
-        clickSoundProp = serializedObject.FindProperty("clickSound");
-        hoverSoundProp = serializedObject.FindProperty("hoverSound");
+        soundInfoProp = serializedObject.FindProperty("soundInfo");
         disableObjectProp = serializedObject.FindProperty("disableCanvas");
         enableObjectProp = serializedObject.FindProperty("enableCanvas");
         disablePanelProp = serializedObject.FindProperty("disablePanel");
@@ -35,8 +33,7 @@ public class UIButtonEditor : ButtonEditor
         // 1. 사운드 설정 (공통)
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Sound Settings", EditorStyles.boldLabel);
-        EditorGUILayout.PropertyField(clickSoundProp);
-        EditorGUILayout.PropertyField(hoverSoundProp);
+        EditorGUILayout.PropertyField(soundInfoProp);
 
         // 2. 버튼 타입 및 타입별 특수 설정
         EditorGUILayout.Space();

@@ -244,8 +244,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  clickSound: {fileID: 0}
-  hoverSound: {fileID: 0}
+  soundInfo: {fileID: 11400000, guid: 8a2d20e24f1d23846b3636a19213c375, type: 2}
   disableCanvas: {fileID: 2002665543}
   enableCanvas: {fileID: 994916237}
   disablePanel: {fileID: 0}
@@ -506,8 +505,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  clickSound: {fileID: 0}
-  hoverSound: {fileID: 0}
+  soundInfo: {fileID: 11400000, guid: 8a2d20e24f1d23846b3636a19213c375, type: 2}
   disableCanvas: {fileID: 939928348}
   enableCanvas: {fileID: 994916237}
   disablePanel: {fileID: 0}
@@ -634,8 +632,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  clickSound: {fileID: 0}
-  hoverSound: {fileID: 0}
+  soundInfo: {fileID: 11400000, guid: 8a2d20e24f1d23846b3636a19213c375, type: 2}
   disableCanvas: {fileID: 2002665543}
   enableCanvas: {fileID: 0}
   disablePanel: {fileID: 0}
@@ -1334,8 +1331,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  clickSound: {fileID: 0}
-  hoverSound: {fileID: 0}
+  soundInfo: {fileID: 11400000, guid: 8a2d20e24f1d23846b3636a19213c375, type: 2}
   disableCanvas: {fileID: 2002665543}
   enableCanvas: {fileID: 0}
   disablePanel: {fileID: 0}
@@ -2501,8 +2497,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  clickSound: {fileID: 0}
-  hoverSound: {fileID: 0}
+  soundInfo: {fileID: 11400000, guid: 8a2d20e24f1d23846b3636a19213c375, type: 2}
   disableCanvas: {fileID: 939928348}
   enableCanvas: {fileID: 2002665543}
   disablePanel: {fileID: 1106451075}
@@ -2938,8 +2933,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  clickSound: {fileID: 0}
-  hoverSound: {fileID: 0}
+  soundInfo: {fileID: 11400000, guid: 8a2d20e24f1d23846b3636a19213c375, type: 2}
   disableCanvas: {fileID: 939928348}
   enableCanvas: {fileID: 994916237}
   disablePanel: {fileID: 1825695388}
@@ -5661,8 +5655,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  clickSound: {fileID: 0}
-  hoverSound: {fileID: 0}
+  soundInfo: {fileID: 11400000, guid: 8a2d20e24f1d23846b3636a19213c375, type: 2}
   disableCanvas: {fileID: 994916237}
   enableCanvas: {fileID: 2002665543}
   disablePanel: {fileID: 0}
@@ -5978,6 +5971,51 @@ MonoBehaviour:
   baseEnabled: 0
   fadeDuration: 0.2
   firstSelectButton: {fileID: 1321276237}
+--- !u!1 &1096455496
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1096455497}
+  - component: {fileID: 1096455498}
+  m_Layer: 0
+  m_Name: SoundManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1096455497
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1096455496}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1096455498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1096455496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2cdf70c58de0a2429648c0ec42d651d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioMixer: {fileID: 24100000, guid: 49a6f386b4230af49a9eb5fc64e81290, type: 2}
 --- !u!1 &1106451070
 GameObject:
   m_ObjectHideFlags: 0
@@ -6201,8 +6239,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  clickSound: {fileID: 0}
-  hoverSound: {fileID: 0}
+  soundInfo: {fileID: 11400000, guid: 8a2d20e24f1d23846b3636a19213c375, type: 2}
   disableCanvas: {fileID: 939928348}
   enableCanvas: {fileID: 994916237}
   disablePanel: {fileID: 0}
@@ -6598,8 +6635,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  clickSound: {fileID: 0}
-  hoverSound: {fileID: 0}
+  soundInfo: {fileID: 11400000, guid: 8a2d20e24f1d23846b3636a19213c375, type: 2}
   disableCanvas: {fileID: 939928348}
   enableCanvas: {fileID: 2002665543}
   disablePanel: {fileID: 0}
@@ -7769,8 +7805,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  clickSound: {fileID: 0}
-  hoverSound: {fileID: 0}
+  soundInfo: {fileID: 11400000, guid: 8a2d20e24f1d23846b3636a19213c375, type: 2}
   disableCanvas: {fileID: 939928348}
   enableCanvas: {fileID: 2002665543}
   disablePanel: {fileID: 1068764834}
@@ -7935,8 +7970,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  clickSound: {fileID: 0}
-  hoverSound: {fileID: 0}
+  soundInfo: {fileID: 11400000, guid: 8a2d20e24f1d23846b3636a19213c375, type: 2}
   disableCanvas: {fileID: 994916237}
   enableCanvas: {fileID: 0}
   disablePanel: {fileID: 0}
@@ -8197,8 +8231,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  clickSound: {fileID: 0}
-  hoverSound: {fileID: 0}
+  soundInfo: {fileID: 11400000, guid: 8a2d20e24f1d23846b3636a19213c375, type: 2}
   disableCanvas: {fileID: 994916237}
   enableCanvas: {fileID: 0}
   disablePanel: {fileID: 0}
@@ -8325,8 +8358,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  clickSound: {fileID: 0}
-  hoverSound: {fileID: 0}
+  soundInfo: {fileID: 11400000, guid: 8a2d20e24f1d23846b3636a19213c375, type: 2}
   disableCanvas: {fileID: 2002665543}
   enableCanvas: {fileID: 939928348}
   disablePanel: {fileID: 0}
@@ -9405,8 +9437,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  clickSound: {fileID: 0}
-  hoverSound: {fileID: 0}
+  soundInfo: {fileID: 11400000, guid: 8a2d20e24f1d23846b3636a19213c375, type: 2}
   disableCanvas: {fileID: 939928348}
   enableCanvas: {fileID: 994916237}
   disablePanel: {fileID: 1825695388}
@@ -9814,3 +9845,4 @@ SceneRoots:
   - {fileID: 2118868446}
   - {fileID: 921975236}
   - {fileID: 511995923}
+  - {fileID: 1096455497}

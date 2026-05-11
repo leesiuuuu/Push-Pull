@@ -1,9 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
+
+// 필요없는 스크립트
+// 추후 삭제할 것
 public class Main : MonoBehaviour
 {
 	private bool isSelected = false;

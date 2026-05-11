@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -37,7 +37,7 @@ public class UIInputManager : MonoBehaviour
         }
         else
         {
-            // 2. 만약 선택된 게 없는데(null), 마우스 클릭 중이라면? 
+            // 2. 만약 선택된 게 없는데(null), 마우스 클릭 중이라면?
             // 빈 공간을 눌렀다는 뜻이므로 직전 오브젝트로 복구
             if (lastSelected != null && lastSelected.activeInHierarchy)
             {
