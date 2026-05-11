@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections;
@@ -6,8 +6,7 @@ using System.Linq;
 
 public class UIButton : Button
 {
-    [SerializeField] private AudioClip clickSound;
-    [SerializeField] private AudioClip hoverSound;
+    [SerializeField] private UISoundInfo soundInfo;
 
     [SerializeField] private ButtonCanvas disableCanvas;        // 비활성화 할(보이지 않게 할 캔버스) 오브젝트
     [SerializeField] private  ButtonCanvas enableCanvas;        // 활성화 할(보이게 할 캔버스) 오브젝트
@@ -37,29 +36,30 @@ public class UIButton : Button
         base.OnPointerEnter(eventData);
         eventData.selectedObject = gameObject;
         // 호버 사운드 재생
+        SoundManager.Instance?.SFXPlay("UI_Hover", soundInfo.HoverSound);
     }
-
     public override void OnSelect(BaseEventData eventData)
     {
         base.OnSelect(eventData);
         // 호버 사운드 재생
+        SoundManager.Instance?.SFXPlay("UI_Hover", soundInfo.HoverSound);
     }
-
+    #region Click/Submit
     public override void OnPointerClick(PointerEventData eventData)
     {
         base.OnPointerClick(eventData);
         // 클릭 사운드 재생
+        SoundManager.Instance?.SFXPlay("UI_Click", soundInfo.ClickSound);
         OnClicked();
-        Debug.Log($"{name} 버튼 클릭됨 (PointerClick)");
     }
-
     public override void OnSubmit(BaseEventData eventData)
     {
         base.OnSubmit(eventData);
         // 클릭 사운드 재생
+        SoundManager.Instance?.SFXPlay("UI_Click", soundInfo.ClickSound);
         OnClicked();
-        Debug.Log($"{name} 버튼 클릭됨 (Submit)");
     }
+    #endregion
 
     public void OnClicked()
     {
@@ -84,7 +84,6 @@ public class UIButton : Button
         yield return new WaitForSeconds(0.2f);
         enableCanvas.EnableCanvas();
     }
-
     private IEnumerator changePanelCoroutine()
     {
         disablePanel.DisablePanel();
