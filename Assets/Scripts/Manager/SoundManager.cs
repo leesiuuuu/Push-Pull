@@ -1,23 +1,20 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.Pool;
 
 public enum PlayerSounds
 {
     Jump = 0,
     Push = 1,
-    Pull = 2,
+    Pull = 2,	
 	Die = 3,
     SoundsCount = 4
 }
 
 public class SoundManager : MonoBehaviour
 {
-	private static SoundManager instance;
-
-	//public AudioSource bgSound;
-	public AudioMixer audioMixer;
-	public static SoundManager Instance
+    public static SoundManager Instance
 	{
 		get
 		{
@@ -25,13 +22,39 @@ public class SoundManager : MonoBehaviour
 			return instance;
 		}
 	}
+	public AudioMixer audioMixer;
+
+	private static SoundManager instance;
+	private ObjectPool<AudioSource> sfxPool;
+
 	private void Awake()
 	{
 		if(instance == null)
 		{
 			instance = this;
 			DontDestroyOnLoad(gameObject);
-		}
+
+			sfxPool = new ObjectPool<AudioSource>(
+				createFunc: () =>
+				{
+					GameObject go = new GameObject("PooledSFX");
+					AudioSource source = go.AddComponent<AudioSource>();
+					go.transform.SetParent(transform);
+					source.outputAudioMixerGroup = audioMixer.FindMatchingGroups("SFX")[0];
+					return source;
+				},
+				actionOnGet: (source) => source.gameObject.SetActive(true),
+				actionOnRelease: source =>
+				{
+					source.Stop();
+					source.clip = null;
+					source.gameObject.SetActive(false);
+				},
+				actionOnDestroy: source => Destroy(source.gameObject),
+				defaultCapacity: 7,
+				maxSize: 15
+			);
+        }
 		else
 		{
 			Destroy(gameObject);
@@ -57,25 +80,18 @@ public class SoundManager : MonoBehaviour
 			SFXSoundVolume(1);
 		}
 	}
+
+    #region Sounds
 	public void SFXPlay(string sfxName, AudioClip clip)
 	{
-		GameObject go = new GameObject(sfxName + "Sound");
-		AudioSource source = go.AddComponent<AudioSource>();
-		source.outputAudioMixerGroup = audioMixer.FindMatchingGroups("SFX")[0];
+		AudioSource source = sfxPool.Get();
+		source.gameObject.name = sfxName + "SFX";		// 추후 문자열 최적화 진행(필요 시)
 		source.clip = clip;
 		source.Play();
 
-		StartCoroutine(DestroyAfterRealtime(go, clip.length));
+		StartCoroutine(DestroyAfterRealtime(source, clip.length));
 	}
-	/*	public void BgSoundPlay(AudioClip clip)
-		{
-			bgSound.clip = clip;
-			bgSound.outputAudioMixerGroup = audioMixer.FindMatchingGroups("Music")[0];
-			bgSound.loop = true;
-			bgSound.volume = 0.1f;
-			bgSound.Play();
-		}*/
-	public void BgFadeIn(AudioSource BgPlayer)
+    public void BgFadeIn(AudioSource BgPlayer)
 	{
 		StartCoroutine(FadeIn(BgPlayer));
 	}
@@ -90,6 +106,28 @@ public class SoundManager : MonoBehaviour
 	public void BgFadeOutCustom(AudioSource BgPlayer, float time)
 	{
 		StartCoroutine(FadeOut(BgPlayer, time));
+	}
+	public void BGSoundVolume(float val)
+	{
+		float n = Mathf.Log10(val) * 20;
+		audioMixer.SetFloat("MusicVolume", n);
+		PlayerPrefs.SetFloat("MusicVolume", val);
+		PlayerPrefs.Save();
+	}
+	public void SFXSoundVolume(float val)
+	{
+		float n = Mathf.Log10(val) * 20;
+		audioMixer.SetFloat("SFXVolume", n);
+		PlayerPrefs.SetFloat("SFXVolume", val);
+		PlayerPrefs.Save();
+	}
+    #endregion
+    
+	#region Coroutines
+    private IEnumerator DestroyAfterRealtime(AudioSource source, float delay)
+	{
+		yield return new WaitForSecondsRealtime(delay); // TimeScale 0이어도 기다림
+		sfxPool.Release(source);
 	}
 	private IEnumerator FadeIn(AudioSource BgPlayer)
 	{
@@ -141,24 +179,5 @@ public class SoundManager : MonoBehaviour
 			yield return null;
 		}
 	}
-	public void BGSoundVolume(float val)
-	{
-		float n = Mathf.Log10(val) * 20;
-		audioMixer.SetFloat("MusicVolume", n);
-		PlayerPrefs.SetFloat("MusicVolume", val);
-		PlayerPrefs.Save();
-	}
-	public void SFXSoundVolume(float val)
-	{
-		float n = Mathf.Log10(val) * 20;
-		audioMixer.SetFloat("SFXVolume", n);
-		PlayerPrefs.SetFloat("SFXVolume", val);
-		PlayerPrefs.Save();
-	}
-
-	private IEnumerator DestroyAfterRealtime(GameObject go, float delay)
-	{
-		yield return new WaitForSecondsRealtime(delay); // TimeScale 0이어도 기다림
-		Destroy(go);
-	}
+    #endregion
 }
